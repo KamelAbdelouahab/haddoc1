@@ -1,6 +1,6 @@
 *.pgm
 example/
-
+*/dataset/
 
 #systemc rules
 *.o
@@ -23,3 +23,7 @@ example/
 */sim/*/work/*
 */sim/*.wlf
 */output_files/
+
+# caffe tmp
+*.solverstate
+*.h5
