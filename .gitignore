@@ -1,0 +1,25 @@
+*.pgm
+example/
+
+
+#systemc rules
+*.o
+*.log
+*.h
+*.cpp
+
+#generated hdl
+*.vhd
+*/vhdl
+
+
+# quartus rules
+*/db/
+*/incremental_db/
+*.bak
+*.stp
+*/sim/*/altera/*
+*/sim/*/lpm/*
+*/sim/*/work/*
+*/sim/*.wlf
+*/output_files/
