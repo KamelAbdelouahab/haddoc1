@@ -10,7 +10,7 @@ layer { name: "mnist"
     scale: 0.00390625
   }
   data_param {
-    source: "/home/kamel/datasets/mnist_train"
+    source: "/home/kamel/datasets/mnist/mnist28_train"
     batch_size: 64
     backend: LMDB
   }
@@ -26,7 +26,7 @@ layer { name: "mnist"
     scale: 0.00390625
   }
   data_param {
-    source: "/home/kamel/datasets/mnist_test"
+    source: "/home/kamel/datasets/mnist/mnist28_test"
     batch_size: 100
     backend: LMDB
   }
@@ -43,7 +43,7 @@ layer { name: "conv1"
   }
   convolution_param {
     num_output: 6
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
@@ -80,7 +80,7 @@ layer { name: "conv2"
   }
   convolution_param {
     num_output: 16
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
@@ -117,7 +117,7 @@ layer { name: "conv3"
   }
   convolution_param {
     num_output: 120
-    kernel_size: 5
+    kernel_size: 3
     stride: 1
     weight_filler {
       type: "xavier"
