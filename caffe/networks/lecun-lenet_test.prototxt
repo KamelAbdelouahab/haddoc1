@@ -1,6 +1,5 @@
 name: "LeNet"
-layer {
-  name: "mnist"
+layer { name: "mnist"
   type: "Data"
   top: "data"
   top: "label"
@@ -16,8 +15,7 @@ layer {
     backend: LMDB
   }
 }
-layer {
-  name: "mnist"
+layer { name: "mnist"
   type: "Data"
   top: "data"
   top: "label"
@@ -33,8 +31,7 @@ layer {
     backend: LMDB
   }
 }
-layer {
-  name: "conv1"
+layer { name: "conv1"
   type: "Convolution"
   bottom: "data"
   top: "conv1"
@@ -56,15 +53,12 @@ layer {
     }
   }
 }
-
-layer {
-  name: "tanh1"
+layer { name: "tanh1"
   type: "TanH"
   bottom: "conv1"
   top: "conv1"
 }
-layer {
-  name: "pool1"
+layer { name: "pool1"
   type: "Pooling"
   bottom: "conv1"
   top: "pool1"
@@ -102,7 +96,6 @@ layer { name: "tanh2"
   top: "conv2"
 }
 layer { name: "pool2"
-  name: "pool2"
   type: "Pooling"
   bottom: "conv2"
   top: "pool2"
@@ -149,8 +142,7 @@ layer { name: "pool3"
     stride: 2
   }
 }
-layer {
-  name: "ip1"
+layer { name: "ip1"
   type: "InnerProduct"
   bottom: "pool3"
   top: "ip1"
@@ -170,8 +162,7 @@ layer {
     }
   }
 }
-layer {
-  name: "ip2"
+layer { name: "ip2"
   type: "InnerProduct"
   bottom: "ip1"
   top: "ip2"
@@ -191,8 +182,7 @@ layer {
     }
   }
 }
-layer {
-  name: "accuracy"
+layer { name: "accuracy"
   type: "Accuracy"
   bottom: "ip2"
   bottom: "label"
@@ -201,8 +191,7 @@ layer {
     phase: TEST
   }
 }
-layer {
-  name: "loss"
+layer { name: "loss"
   type: "SoftmaxWithLoss"
   bottom: "ip2"
   bottom: "label"
