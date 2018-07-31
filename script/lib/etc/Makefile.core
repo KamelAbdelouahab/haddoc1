@@ -1,0 +1,166 @@
+#######################################################################
+# This is a core makefile for CAPH projects
+# It should be included in all Makefiles related to CAPH projects     
+#######################################################################
+
+SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+include $(SELF_DIR)config
+CURRENT_DIRNAME = $(notdir $(shell pwd))
+
+######################################### PLATFORM SPECIFIC DEFINITIONS
+# These definitions may have to be adjusted according to your platform
+
+# GENERAL
+TARGET_ARCH	= Linux64
+
+# UTILITY PROGRAMS
+DISPIMG     = eog
+DISPDOT	    = xdot    
+CONVERT     = convert
+GRAPHVIZ    = dot    
+GTKWAVE     = gtkwave 
+MAIN	    = cnn_generated
+
+# SYSTEMC
+# root of your SystemC installation
+SC_DIR		= /usr/local/systemc-2.3.1
+#~ SC_DIR		= /usr/local/systemc-2.3.1
+# c++ compiler used to compile systemc code
+SC_CXX      = g++
+# c++ compiler used to link systemc code
+SC_LD	 	= g++
+ifeq ($(CPPSTD),c++11)
+CXXFLAGS    = -std=c++11 -I. -I$(CAPH_SYSC_LIB) -I$(SC_DIR)/include -Wno-deprecated -Wno-parentheses-equality -D_CPP11 #-DSYSC_TRACE_BUFFERS  #-DTRACE_SYSC_IO
+else
+CXXFLAGS    = -std=c++11 -I. -I$(CAPH_SYSC_LIB) -I$(SC_DIR)/include -Wno-deprecated -Wno-parentheses-equality #-DSYSC_TRACE_BUFFERS  #-DTRACE_SYSC_IO
+endif
+LDFLAGS	    = -L$(SC_DIR)/lib-linux64
+
+# VHDL
+
+# See ../../config
+
+ifeq ($(USE_VHDL_FP_LIB),yes)
+GHDL_ELAB_OPTS 	= -P$(CAPH_VHDL_LIB) -P$(VHDL_FP_LIB)
+else
+GHDL_ELAB_OPTS 	= -P$(CAPH_VHDL_LIB)
+endif
+
+QUARTUS_DIR = /home/kamel/altera/13.1/quartus/bin
+######################################### PLATFORM INDEPENDANT DEFINITIONS
+# Nothing should need to be edited below this line
+
+CAPH=$(CAPHC)
+CAPHLIB=$(CAPH_CAPH_LIB)
+TXT2BIN=$(CAPH_TOOLS)/txt2bin
+BIN2TXT=$(CAPH_TOOLS)/bin2txt
+PGM2BIN=$(CAPH_TOOLS)/pgm2bin
+BIN2PGM=$(CAPH_TOOLS)/bin2pgm
+PGM2TXT=$(CAPH_TOOLS)/pgm2txt
+TXT2PGM=$(CAPH_TOOLS)/txt2pgm
+
+GEN_TXT_FILES = $(OUTPUT_STREAMS)
+GEN_BIN_FILES = $(INPUT_STREAMS:.txt=.bin) $(OUTPUT_STREAMS:.txt=.bin)
+GEN_PGM_FILES = $(OUTPUT_STREAMS:.txt=.pgm) 
+GEN_TIF_FILES = $(OUTPUT_STREAMS:.txt=.tif) 
+
+-include makefile.local
+
+### CAPH TARGETS
+
+# DOT
+dot: $(MAIN).cph
+	$(CAPH) -dot $(DOT_OPTS) $(MAIN).cph
+	$(GRAPHVIZ) $(MAIN).dot
+	$(DISPDOT)  $(MAIN).dot 
+# SIMULATION
+
+SIM_EXTRA_CMOS   = $(SIM_EXTRA_SOURCES:.ml=.cmo)
+SIM_EXTRA_CMIS   = $(SIM_EXTRA_SOURCES:.ml=.cmi)
+
+sim.makefile: $(TXT_INPUT_STREAMS)
+	$(CAPH) -make -sim $(SIM_OPTS) $(MAIN).cph
+
+sim: $(MAIN).cph $(TXT_INPUT_STREAMS) $(SIM_EXTRA_CMOS)
+	$(CAPH) -sim $(SIM_OPTS) $(MAIN).cph
+
+# SYSTEMC
+
+SC_GEN_OBJS    = $(SC_GEN_SOURCES:.cpp=.o)
+SC_EXTRA_OBJS   = $(SC_EXTRA_SOURCES:.cpp=.o)
+SC_EXE	   = sc.exe
+
+systemc.makefile:
+	$(CAPH) -make -systemc $(SC_OPTS) $(MAIN).cph
+
+systemc.code: $(MAIN).cph
+	$(CAPH) -systemc $(SC_OPTS) $(MAIN).cph
+
+$(SC_EXE): $(SC_GEN_OBJS) $(SC_EXTRA_OBJS)
+	$(SC_LD) $(LDFLAGS) $(SC_GEN_OBJS) $(SC_EXTRA_OBJS) -o $(SC_EXE) -lsystemc  2>&1 | c++filt
+
+systemc.exe: $(SC_EXE)
+
+systemc.run: $(SC_EXE) $(INPUT_STREAMS)
+	./$(SC_EXE)
+
+systemc: systemc.code systemc.exe systemc.run
+
+# VHDL
+
+binary:
+	$(TXT2BIN) $(TXT2BIN_OPTS) $(TXT2BIN_IN) > $(TXT2BIN_OUT) 
+
+
+vhdl.makefile:
+	$(CAPH) -make -vhdl $(VHDL_OPTS) $(MAIN).cph
+
+vhdl.code: $(MAIN).cph
+	$(CAPH) -vhdl $(VHDL_OPTS) $(MAIN).cph
+
+vhdl.run:vhdl.elab $(BIN_INPUT_STREAMS)
+	$(GHDL) -r $(GHDL_ELAB_OPTS) $(MAIN)_tb $(GHDL_RUN_OPTS)
+
+vhdl: vhdl.run
+
+vhdl.viewvcdtrace: $(MAIN)_tb.vcd
+	$(GTKWAVE) -f $(MAIN)_tb.vcd -a $(MAIN)_tb.sav
+vhdl.viewtrace: $(MAIN)_tb.ghw
+	$(GTKWAVE) -f $(MAIN)_tb.ghw -a $(MAIN)_tb.sav
+
+vhdl.quartus:
+	CAPH_DIR=$(PREFIX) $(ETCDIR)/mk_quartus_proj $(QUARTUS_DIR)/$(CURRENT_DIRNAME)_net
+
+# GENERIC RULES
+
+.SUFFIXES: .cpp .o .txt .pgm .bin
+
+.cpp.o:
+	$(SC_CXX) $(CXXFLAGS) -c -o $@ $<
+
+clean:
+	@-rm -f *.o *~ *_old $(SC_EXE)
+	@-rm -rf *.dSYM
+	@-rm -f a.out
+	@-rm -f core
+	@-rm -f caph.output
+	@-rm -f *.vcd *.ghw
+	@-rm -f *.dot
+	@-rm -f *.bin
+	@-rm -f *.qip
+	@-rm -f doc/*.log doc/*.dvi doc/*.rel doc/*.aux
+	@-rm -f work-obj93.cf
+	@-rm -f $(SC_GEN_SOURCES) $(SC_GEN_HEADERS) $(SC_EXTRA_FILES)
+	@-rm -f $(VHDL_GEN_SOURCES) $(VHDL_EXTRA_FILES)
+	@-rm -f $(GEN_TXT_FILES) $(GEN_BIN_FILES) $(GEN_PGM_FILES) $(GEN_TIF_FILES)
+	@-rm -f $(SIM_EXTRA_CMOS) $(SIM_EXTRA_CMI)
+	@-rm -f doc/*.pdf
+	@-rm -f ./res/*.txt
+	
+
+clobber: clean
+	@-rm -f Makefile.{sim,systemc,vhdl}
+	@-rm -f $(BIN_INPUT_STREAM)
+	@-rm -f $(BIN_OUTPUT_STREAM)
+	@-rm -f $(TXT_OUTPUT_STREAMS)
+	@-rm -f $(PGM_OUTPUT_STREAMS)

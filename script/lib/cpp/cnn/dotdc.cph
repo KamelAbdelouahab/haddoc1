@@ -1,0 +1,8 @@
+actor dot16()
+in (x0:int<s,m> dc,x1:int<s,m> dc,x2:int<s,m> dc,x3:int<s,m> dc,x4:int<s,m> dc,x5:int<s,m> dc,x6:int<s,m> dc,x7:int<s,m> dc,w0:int<s,m> dc,w1:int<s,m> dc,w2:int<s,m> dc,w3:int<s,m> dc,w4:int<s,m> dc,w5:int<s,m> dc,w6:int<s,m> dc,w7:int<s,m> dc) 
+out(o:int<s,m> dc) 
+rules
+|(x0:'<,x1:'<,x2:'<,x3:'<,x4:'<,x5:'<,x6:'<,x7:'<,w0:'<,w1:'<,w2:'<,w3:'<,w4:'<,w5:'<,w6:'<,w7:'<) -> (o:'<)
+|(x0:'>,x1:'>,x2:'>,x3:'>,x4:'>,x5:'>,x6:'>,x7:'>,w0:'>,w1:'>,w2:'>,w3:'>,w4:'>,w5:'>,w6:'>,w7:'>) -> (o:'>)
+|(x0:'x0,x1:'x1,x2:'x2,x3:'x3,x4:'x4,x5:'x5,x6:'x6,x7:'x7,w0:'w0,w1:'w1,w2:'w2,w3:'w3,w4:'w4,w5:'w5,w6:'w6,w7:'w7)-> (o:'((x0*w0)+(x1*w1)+(x2*w2)+(x3*w3)+(x4*w4)+(x5*w5)+(x6*w6)+(x7*w7)))
+;

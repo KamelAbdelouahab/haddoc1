@@ -1,0 +1,97 @@
+
+function sum (x,y) = x+y;
+function max(x,y) = if x>y then x else y;
+
+-- Horizontal operation
+actor poolh (k:unsigned<8>)
+  in (a:int<s,m> dc )
+  out(c:int<s,m> dc )
+
+var s : {WaitSoF,WaitSoL,Sum} = WaitSoF
+var xsum  : int<s,m>
+var j : unsigned <8>
+
+rules
+| (s:WaitSoF, a:'<) -> (s:WaitSoL, c:'<)
+| (s:WaitSoL, a:'<) -> (s:Sum, c:'<, xsum:0, j:0)
+| (s:WaitSoL, a:'>) -> (s:WaitSoF, c:'>)
+| (s:Sum, a:'x) when j<(k-1) -> (s:Sum, xsum: max(xsum,x), j:j+1)
+| (s:Sum, a:'x) when j=(k-1) -> (s:Sum, c:'(max(xsum,x)), xsum:0, j:0)
+| (s:Sum, a:'>) -> (s:WaitSoL,c:'>)
+;
+
+
+-- Vertical Operation
+actor poolv (k:unsigned<8>)
+    in (a:int<s,m> dc, z:int<s,m>)
+    out (c:int<s,m> dc, oz:int<s,m> )
+  
+  var s : {WaitSoF,Wait1L, FirstLine, WaitSoL,ACC,WaitkLine,WriteRes} = WaitSoF
+  var j : unsigned <8>
+
+ rules
+| (s:WaitSoF, a:'<)		 -> (s:Wait1L, c:'<)
+| (s:Wait1L, a:'>)		 -> (s:WaitSoF,c:'>)
+| (s:Wait1L, a:'<)		 -> (s:FirstLine)
+| (s:FirstLine, a:'x)    -> (s:FirstLine, oz:x )
+| (s:FirstLine, a:'>) when k>2 -> (s:WaitSoL, j:1) 
+| (s:FirstLine, a:'>) -> (s:WaitkLine, j:1) 		-- si k=2 go direct en WriteRes
+| (s:WaitSoL, a:'<)		 -> (s:ACC)
+| (s:ACC, a:'x, z:acc)	 -> (s:ACC,  oz:max(x,acc))
+| (s:ACC, a:'>) when j<(k-2)   -> (s:WaitSoL, j:j+1)
+| (s:ACC, a:'>)         	 -> (s:WaitkLine, j: 0)
+| (s:WaitkLine, a:'<)		 -> (s:WriteRes, c:'< )
+| (s:WriteRes, a:'x, z:acc) 	 -> (s:WriteRes, c:'(max(x,acc)) )
+| (s:WriteRes, a:'>) 		 -> (s:Wait1L, c:'> )
+;
+  
+net poolv_m k ii = let rec (oo,z1) = poolv k (ii,z1) in oo;
+
+-- a surcharger avec des fonctions differentes suivant operation effectuée (ici max)
+net pool n m  x = poolv_m n (poolh m (x));
+
+actor hsum (k:unsigned<8>)
+  in (a:int<s,m>  dc )
+  out (c:int<s,m>  dc )
+var s : {WaitSoF,WaitSoL,Sum} = WaitSoF
+var xsum  : int<s,m> 
+var j : unsigned <8>
+
+rules
+| (s:WaitSoF, a:'<) -> (s:WaitSoL, c:'<)
+| (s:WaitSoL, a:'<) -> (s:Sum, c:'<, xsum:0, j:0)
+| (s:WaitSoL, a:'>) -> (s:WaitSoF, c:'>)
+| (s:Sum, a:'x) when j<(k-1) -> (s:Sum, xsum: xsum+x, j:j+1)
+| (s:Sum, a:'x) when j=(k-1) -> (s:Sum, c:'(xsum+x), xsum:0, j:0)
+| (s:Sum, a:'>) -> (s:WaitSoL,c:'>)
+;
+
+actor vsum_act (k:unsigned<8>)
+    in (a:int<s,m> dc, z:int<s,m> )
+    out (c:int<s,m>  dc, oz:int<s,m>  )
+  
+var s : {WaitSoF,Wait1L, FirstLine, WaitSoL,ACC,WaitkLine,WriteRes} = WaitSoF
+
+var j : unsigned <8>
+rules
+| (s:WaitSoF, a:'<) -> (s:Wait1L, c:'<)
+| (s:Wait1L, a:'>) -> (s:WaitSoF,c:'>)
+| (s:Wait1L, a:'<) -> (s:FirstLine)
+| (s:FirstLine, a:'x) -> (s:FirstLine, oz:x )
+| (s:FirstLine, a:'>) when k>2 -> (s:WaitSoL, j:1) 
+| (s:FirstLine, a:'>) -> (s:WaitSoL, j:1)
+| (s:WaitSoL, a:'<) -> (s:ACC)
+| (s:ACC, a:'x, z:acc) -> (s:ACC,  oz:x+acc)
+| (s:ACC, a:'>) when j<(k-2)-> (s:WaitSoL, j:j+1)
+| (s:ACC, a:'>)          -> (s:WaitkLine, j: 0)
+| (s:WaitkLine, a:'<) -> (s:WriteRes, c:'< )
+| (s:WriteRes, a:'x, z:acc) -> (s:WriteRes, c:'(x+acc) )
+| (s:WriteRes, a:'>) -> (s:Wait1L, c:'> )
+;
+
+net vsum k ii = let rec (oo,z1) = vsum_act k (ii,z1) in oo;
+
+
+
+
+

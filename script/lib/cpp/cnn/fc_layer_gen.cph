@@ -1,0 +1,10 @@
+net w_fc0= fcc10 distr8 (weights_fc[0]) 4 4 (biais_fc[0]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc1= fcc10 distr8 (weights_fc[1]) 4 4 (biais_fc[1]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc2= fcc10 distr8 (weights_fc[2]) 4 4 (biais_fc[2]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc3= fcc10 distr8 (weights_fc[3]) 4 4 (biais_fc[3]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc4= fcc10 distr8 (weights_fc[4]) 4 4 (biais_fc[4]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc5= fcc10 distr8 (weights_fc[5]) 4 4 (biais_fc[5]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc6= fcc10 distr8 (weights_fc[6]) 4 4 (biais_fc[6]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc7= fcc10 distr8 (weights_fc[7]) 4 4 (biais_fc[7]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc8= fcc10 distr8 (weights_fc[8]) 4 4 (biais_fc[8]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
+net w_fc9= fcc10 distr8 (weights_fc[9]) 4 4 (biais_fc[9]) w_conv30 w_conv30 w_conv31 w_conv32 w_conv33 w_conv34 w_conv35 w_conv36 w_conv37;
