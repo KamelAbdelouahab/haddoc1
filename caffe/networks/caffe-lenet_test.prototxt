@@ -28,7 +28,7 @@ layer {
     scale: 0.00390625
   }
   data_param {
-    source: "/home/kamel/datasets/usps_test"
+    source: "/home/kamel/datasets/usps/usps28_test"
     batch_size: 100
     backend: LMDB
   }
