@@ -99,6 +99,6 @@ caph_net_filename = CAPH_GENERATED + '/cnn_generated.cph'
 
 genCaph_Headers(caph_net_filename)
 genCaph_CNN(Network,caph_net_filename,caph_dataype,"conv233c_wb_opt",shiftnorm)
-#genCaph_FC(Network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME)
+genCaph_FC(Network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME)
 
 print(" > Succefully generated caph network in: \n \t " + caph_net_filename +' \n')

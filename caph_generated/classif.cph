@@ -1,0 +1,26 @@
+ 
+actor sub (w:int<s,m>)
+ in (i1: int<s,m> dc)
+ out (o: int<s,m> dc)
+rules
+| i1:'< -> o:'<
+| i1:'> -> o:'>
+| i1:'a -> o:'(a-w);
+
+actor square 
+ in (i1: int<s,m> dc)
+ out (o: int<s,m> dc)
+rules
+| i1:'< -> o:'<
+| i1:'> -> o:'>
+| i1:'a -> o:'(a*a);
+
+
+actor ssquare (w:int<s,m>)
+in (i1: int<s,m> dc)
+ out (o: int<s,m> dc)
+rules
+| i1:'< -> o:'<
+| i1:'> -> o:'>
+| i1:'a -> o:'((a-w)*(a-w));
+

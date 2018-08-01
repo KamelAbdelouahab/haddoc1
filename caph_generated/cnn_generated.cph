@@ -1,0 +1,162 @@
+#include "dc.cph"
+#include "mapfct.cph"
+#include "conv_cnn.cph"
+#include "relu.cph"
+#include "pool.cph"
+#include "repdc.cph"
+#include "classif.cph"
+#include "weights.cph"
+#include "dotdc.cph"
+#include "fc_distri_act.cph"
+#include "sumdc.cph"
+ 
+net(w_conv10,w_conv11,w_conv12,w_conv13,w_conv14,w_conv15)=convs conv233c_wb_opt rep6 weights_conv1 7 biais_conv1 i;
+net(w_r0,w_r1,w_r2,w_r3,w_r4,w_r5)= map relu ( w_conv10,w_conv11,w_conv12,w_conv13,w_conv14,w_conv15);
+
+net(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15)= map (pool 2 2) ( w_r0,w_r1,w_r2,w_r3,w_r4,w_r5);
+
+ net(w_conv20,w_conv21,w_conv22,w_conv23,w_conv24,w_conv25,w_conv26,w_conv27,w_conv28,w_conv29,w_conv210,w_conv211,w_conv212,w_conv213,w_conv214,w_conv215)= convlayer conv233c_wb_opt weights_conv2 7 biais_conv2 sum6 relu 
+	 (	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15),
+	(w_pool10,w_pool11,w_pool12,w_pool13,w_pool14,w_pool15));
+
+net(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215)= map (pool 2 2) ( w_conv20,w_conv21,w_conv22,w_conv23,w_conv24,w_conv25,w_conv26,w_conv27,w_conv28,w_conv29,w_conv210,w_conv211,w_conv212,w_conv213,w_conv214,w_conv215);
+
+ net(w_conv30,w_conv31,w_conv32,w_conv33,w_conv34,w_conv35,w_conv36,w_conv37,w_conv38,w_conv39,w_conv310,w_conv311,w_conv312,w_conv313,w_conv314,w_conv315,w_conv316,w_conv317,w_conv318,w_conv319,w_conv320,w_conv321,w_conv322,w_conv323,w_conv324,w_conv325,w_conv326,w_conv327,w_conv328,w_conv329,w_conv330,w_conv331,w_conv332,w_conv333,w_conv334,w_conv335,w_conv336,w_conv337,w_conv338,w_conv339,w_conv340,w_conv341,w_conv342,w_conv343,w_conv344,w_conv345,w_conv346,w_conv347,w_conv348,w_conv349,w_conv350,w_conv351,w_conv352,w_conv353,w_conv354,w_conv355,w_conv356,w_conv357,w_conv358,w_conv359)= convlayer conv233c_wb_opt weights_conv3 7 biais_conv3 sum16 relu 
+	 (	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215),
+	(w_pool20,w_pool21,w_pool22,w_pool23,w_pool24,w_pool25,w_pool26,w_pool27,w_pool28,w_pool29,w_pool210,w_pool211,w_pool212,w_pool213,w_pool214,w_pool215));
+
+net(w_pool30,w_pool31,w_pool32,w_pool33,w_pool34,w_pool35,w_pool36,w_pool37,w_pool38,w_pool39,w_pool310,w_pool311,w_pool312,w_pool313,w_pool314,w_pool315,w_pool316,w_pool317,w_pool318,w_pool319,w_pool320,w_pool321,w_pool322,w_pool323,w_pool324,w_pool325,w_pool326,w_pool327,w_pool328,w_pool329,w_pool330,w_pool331,w_pool332,w_pool333,w_pool334,w_pool335,w_pool336,w_pool337,w_pool338,w_pool339,w_pool340,w_pool341,w_pool342,w_pool343,w_pool344,w_pool345,w_pool346,w_pool347,w_pool348,w_pool349,w_pool350,w_pool351,w_pool352,w_pool353,w_pool354,w_pool355,w_pool356,w_pool357,w_pool358,w_pool359)= map (pool 2 2) ( w_conv30,w_conv31,w_conv32,w_conv33,w_conv34,w_conv35,w_conv36,w_conv37,w_conv38,w_conv39,w_conv310,w_conv311,w_conv312,w_conv313,w_conv314,w_conv315,w_conv316,w_conv317,w_conv318,w_conv319,w_conv320,w_conv321,w_conv322,w_conv323,w_conv324,w_conv325,w_conv326,w_conv327,w_conv328,w_conv329,w_conv330,w_conv331,w_conv332,w_conv333,w_conv334,w_conv335,w_conv336,w_conv337,w_conv338,w_conv339,w_conv340,w_conv341,w_conv342,w_conv343,w_conv344,w_conv345,w_conv346,w_conv347,w_conv348,w_conv349,w_conv350,w_conv351,w_conv352,w_conv353,w_conv354,w_conv355,w_conv356,w_conv357,w_conv358,w_conv359);
+
+stream i:signed<32>dc from "sample.txt";
+stream w_pool30 : signed<32> dc to "w_pool30.txt";
+stream w_pool31 : signed<32> dc to "w_pool31.txt";
+stream w_pool32 : signed<32> dc to "w_pool32.txt";
+stream w_pool33 : signed<32> dc to "w_pool33.txt";
+stream w_pool34 : signed<32> dc to "w_pool34.txt";
+stream w_pool35 : signed<32> dc to "w_pool35.txt";
+stream w_pool36 : signed<32> dc to "w_pool36.txt";
+stream w_pool37 : signed<32> dc to "w_pool37.txt";
+stream w_pool38 : signed<32> dc to "w_pool38.txt";
+stream w_pool39 : signed<32> dc to "w_pool39.txt";
+stream w_pool310 : signed<32> dc to "w_pool310.txt";
+stream w_pool311 : signed<32> dc to "w_pool311.txt";
+stream w_pool312 : signed<32> dc to "w_pool312.txt";
+stream w_pool313 : signed<32> dc to "w_pool313.txt";
+stream w_pool314 : signed<32> dc to "w_pool314.txt";
+stream w_pool315 : signed<32> dc to "w_pool315.txt";
+stream w_pool316 : signed<32> dc to "w_pool316.txt";
+stream w_pool317 : signed<32> dc to "w_pool317.txt";
+stream w_pool318 : signed<32> dc to "w_pool318.txt";
+stream w_pool319 : signed<32> dc to "w_pool319.txt";
+stream w_pool320 : signed<32> dc to "w_pool320.txt";
+stream w_pool321 : signed<32> dc to "w_pool321.txt";
+stream w_pool322 : signed<32> dc to "w_pool322.txt";
+stream w_pool323 : signed<32> dc to "w_pool323.txt";
+stream w_pool324 : signed<32> dc to "w_pool324.txt";
+stream w_pool325 : signed<32> dc to "w_pool325.txt";
+stream w_pool326 : signed<32> dc to "w_pool326.txt";
+stream w_pool327 : signed<32> dc to "w_pool327.txt";
+stream w_pool328 : signed<32> dc to "w_pool328.txt";
+stream w_pool329 : signed<32> dc to "w_pool329.txt";
+stream w_pool330 : signed<32> dc to "w_pool330.txt";
+stream w_pool331 : signed<32> dc to "w_pool331.txt";
+stream w_pool332 : signed<32> dc to "w_pool332.txt";
+stream w_pool333 : signed<32> dc to "w_pool333.txt";
+stream w_pool334 : signed<32> dc to "w_pool334.txt";
+stream w_pool335 : signed<32> dc to "w_pool335.txt";
+stream w_pool336 : signed<32> dc to "w_pool336.txt";
+stream w_pool337 : signed<32> dc to "w_pool337.txt";
+stream w_pool338 : signed<32> dc to "w_pool338.txt";
+stream w_pool339 : signed<32> dc to "w_pool339.txt";
+stream w_pool340 : signed<32> dc to "w_pool340.txt";
+stream w_pool341 : signed<32> dc to "w_pool341.txt";
+stream w_pool342 : signed<32> dc to "w_pool342.txt";
+stream w_pool343 : signed<32> dc to "w_pool343.txt";
+stream w_pool344 : signed<32> dc to "w_pool344.txt";
+stream w_pool345 : signed<32> dc to "w_pool345.txt";
+stream w_pool346 : signed<32> dc to "w_pool346.txt";
+stream w_pool347 : signed<32> dc to "w_pool347.txt";
+stream w_pool348 : signed<32> dc to "w_pool348.txt";
+stream w_pool349 : signed<32> dc to "w_pool349.txt";
+stream w_pool350 : signed<32> dc to "w_pool350.txt";
+stream w_pool351 : signed<32> dc to "w_pool351.txt";
+stream w_pool352 : signed<32> dc to "w_pool352.txt";
+stream w_pool353 : signed<32> dc to "w_pool353.txt";
+stream w_pool354 : signed<32> dc to "w_pool354.txt";
+stream w_pool355 : signed<32> dc to "w_pool355.txt";
+stream w_pool356 : signed<32> dc to "w_pool356.txt";
+stream w_pool357 : signed<32> dc to "w_pool357.txt";
+stream w_pool358 : signed<32> dc to "w_pool358.txt";
+stream w_pool359 : signed<32> dc to "w_pool359.txt";

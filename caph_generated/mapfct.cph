@@ -1,0 +1,82 @@
+-- Fonction de mapping d'un ensemble de convolueurs à partir d'un seul flux 
+-- ============================================================
+-- actor_conv: nom de l'acteur à utiliser (ex:conv233c_wb_opt)
+-- dup_fct: fonction de replication de entrees 1 to n => fixe le nombre de convolueurs à instancier
+-- kernels_weights: tableau de poids
+-- shift: facteur  de normalisation des convolutions
+-- biais_weights: biais ajouté en sortie.
+-- x: flux d'entrée
+
+net convs actor_conv dup_fct kernels_weights shift biais_weights  x = 
+	let ff i x =  biais (biais_weights[i]) (actor_conv (kernels_weights[i]) shift x ) in
+	 	mapi ff (dup_fct x);
+
+
+-- Fonction Neurone 
+--===============================
+-- actor_conv: nom de l'acteur à utiliser pour la convolution (ex:conv233c_wb_opt)
+-- kernels_weights: tableau de poids
+-- shift: facteur  de normalisation des convolutions
+-- biais_weights: biais sur chaque conv.
+-- x: tuple de flux d'entrée
+-- sumx: acteur de somme 
+
+net neurone actor_conv kernels_weights shift biais_weight sumx x = 
+	let ff i x =  actor_conv (kernels_weights[i]) shift x in
+	 	biais (biais_weight) ( sumx (mapi ff (x)) );
+
+
+-- Fonction Neurone avec acteur d'activation intégré
+--=======================================================================
+-- actor_conv: nom de l'acteur à utiliser pour la convolution (ex:conv233c_wb_opt)
+-- kernels_weights: tableau de poids
+-- shift: facteur  de normalisation des convolutions
+-- biais_weight: 1 biais spar neurone.
+-- tx: tuple de flux d'entrée
+-- sumx: acteur de somme des conv
+-- actor_activation: acteur d'activation
+
+net neurone_act actor_conv kernels_weights shift biais_weight sumx actor_activation tx = 
+	let ff i tx =  actor_conv (kernels_weights[i]) shift tx in
+	 	actor_activation(biais biais_weight (sumx (mapi ff (tx)))) ;
+
+
+
+
+-- Fonction Couche de neurones
+--=======================================================================
+-- conv_act: nom de l'acteur à utiliser pour la convolution (ex:conv233c_wb_opt)
+-- weights: tableau de poids 3D
+-- shift: facteur  de normalisation des convolutions
+-- biais_weight: tableau de biais: 1 Biais par neurone
+-- sum_act: acteur de somme des conv (depend du nombre de conv dans un neurone
+-- fact : actur d'activation
+-- ttx: tuple of tuple ! chaque tuple correspond aux connections d'un neurone
+-- usage: net (os1,os2) = convlayer conv233c_wb_opt weights_N1 0 biais_C1 sum3 relu ((t1,t2,t3),(t4,t5,t6));
+
+net convlayer conv_act weights shift biais sum_act fact ttx =
+	let ff i ttx = neurone_act conv_act (weights[i]) 0 (biais[i]) sum_act fact ttx in
+		mapi ff (ttx);
+
+
+
+		
+--========================================================================
+-- Neurone d'une couche FC
+-- TODO: enleve le foldt sum2 et le map dot2: remplacer  par
+
+-- net fclayer weights nx ny biais  x ttx =
+-- 	let phi i ttx = fcc4 distr6 (weights[i]) 4 4 (biais[i]) x w_c30 w_c31 w_c32 w_c33 w_c34 w_c35
+-- 	in nappi 3 phi ttx;
+-- 
+-- -- net (w_fc0,w_fc1,w_fc2) = fclayer weights_ip1 4 4 biais_ip1 w_c30 (w_c30,w_c31,w_c32,w_c33,w_c34,w_c35);
+
+--========================================================================
+-- Neurone d'une couche de Classification: Distance euclidienne
+--========================================================================
+net fclass weights sum_act tx = 
+	let ff i tx =  sub (weights[i]) tx in
+	 	 sum_act (map square (mapi ff (tx))) ;
+
+
+

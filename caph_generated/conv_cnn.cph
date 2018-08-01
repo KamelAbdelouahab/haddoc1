@@ -1,0 +1,214 @@
+actor shift (n: int)
+	in  (a: signed<32> dc)
+	out (c: signed<32> dc)
+rules a -> c
+	| '< -> '<
+	| 'p -> 'p>>n
+	| '> -> '>
+;
+-- CONV 33 avec suppression contour (requires blanking) 
+-------------------------------------------------------------
+
+actor conv2u33_wb_a (k:int<s,m> array[9], n:unsigned<8>)
+  in (a:int<s,m> dc,    -- input
+      z:int<s,m> dc,    -- previous line  (fed back through an external link)
+     zz:int<s,m> dc)    -- pre-previous line  (fed back through an external link)
+ out (c:  int<s,m> dc,  -- output
+      oz:int<s,m> dc,   -- previous line  (fed back through an external link)
+     ozz:int<s,m> dc)   -- previous line  (fed back through an external link)
+
+var s : {WaitSoF,WaitSoL1,BufL1,WaitSoL2,BufL2,WaitNewL,Bufpix1,Bufpix2,Conv,Dumpixel,Dumptok,Dumpline,DumpEoF} = WaitSoF
+
+var x1 :int<s,m>
+var x2 :int<s,m>
+var x4 :int<s,m>
+var x5 :int<s,m>
+var x7 :int<s,m>
+var x8 :int<s,m>
+
+rules
+| (s:WaitSoF , a:'<)          -> (s:WaitSoL1, c:'<)
+| (s:WaitSoL1, a:'<)          -> (s:BufL1, oz:'<)
+| (s:BufL1, a:'p)             -> (s:BufL1, oz:'p)
+| (s:BufL1, a:'>)             -> (s:WaitSoL2, oz:'>)
+| (s:WaitSoL2, a:'<, z:'<)    -> (s:BufL2, ozz:'<, oz:'<)
+| (s:BufL2, a:'x0,z:'x3)      -> (s:BufL2, ozz:'x3, oz:'x0)
+| (s:BufL2, a:'>, z:'>)       -> (s:WaitNewL, ozz:'>, oz:'>)
+
+| (s:WaitNewL, a:'<, z:'<, zz:'<)  -> (s:Bufpix1, c:'<, ozz:'<, oz:'<)
+| (s:WaitNewL, a:'>)  -> (s:Dumptok, ozz:'>, oz:'>)
+| (s:Bufpix1, a:'x0, z:'x3, zz:'x6)  -> (s:Bufpix2, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Bufpix2, a:'x0, z:'x3, zz:'x6) -> (s:Conv, x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Conv, a:'x0, z:'x3, zz:'x6) ->
+    (s:Conv,
+     c: let  cc = k[0]*x0+k[1]*x1+k[2]*x2+k[3]*x3+k[4]*x4+k[5]*x5+k[6]*x6+k[7]*x7+k[8]*x8
+        in 'cc>>n, x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Conv, a:'>, z:'>, zz:'>)         -> (s:WaitNewL, c:'>, ozz:'>, oz:'>)
+| (s:Dumptok,  z:'<, zz:'< )  -> (s:Dumpline) -- this requires vertical blanking (at least > image width)
+| (s:Dumpline, z:'x, zz:'y) -> (s:Dumpline)
+| (s:Dumpline, z:'>, zz:'>) -> (s:DumpEoF)
+| (s:DumpEoF,  z:'>,zz:'>) -> (s:WaitSoF, c:'>)
+;
+
+
+net conv233c_wb kernel norm i = let rec (o,z,zz) = conv2u33_wb_a (kernel,norm) (i,z,zz) in o;
+
+
+
+---------------------------------------------------
+-- CONV 33 avec suppression contour (sans blanking) 
+---------------------------------------------------
+
+actor conv33 (k:int<s,m> array[9], n:unsigned<8>)
+  in (a:int<s,m> dc,    -- input
+      z:int<s,m> dc,    -- previous line  (fed back through an external link)
+     zz:int<s,m> dc)    -- pre-previous line  (fed back through an external link)
+ out (c:  int<s,m> dc,  -- output
+      oz:int<s,m> dc,   -- previous line  (fed back through an external link)
+     ozz:int<s,m> dc)   -- previous line  (fed back through an external link)
+
+var s : {WaitSoF,WaitSoL1,BufL1,WaitSoL2,BufL2,WaitNewL,Bufpix1,Bufpix2,Conv} = WaitSoF
+
+var x1 :int<s,m>
+var x2 :int<s,m>
+var x4 :int<s,m>
+var x5 :int<s,m>
+var x7 :int<s,m>
+var x8 :int<s,m>
+
+rules
+| (s:WaitSoF , a:'<)          		-> (s:WaitSoL1, c:'<)
+| (s:WaitSoL1, a:'<, z:'<, zz:'<)   -> (s:BufL1, oz:'<) -- cleaning fifo rules after first image
+| (s:WaitSoL1, a:'<)          		-> (s:BufL1, oz:'<)
+| (s:BufL1, a:'p, 	z:'x, zz:'y)    -> (s:BufL1, oz:'p)-- cleaning fifo rules after first image
+| (s:BufL1, a:'p)            		-> (s:BufL1, oz:'p)
+| (s:BufL1, a:'>,	z:'>,zz:'>)     -> (s:WaitSoL2, oz:'>)-- cleaning fifo rules after first image
+| (s:BufL1, a:'>)             		-> (s:WaitSoL2, oz:'>)
+| (s:WaitSoL2, a:'<, z:'<)    		-> (s:BufL2, ozz:'<, oz:'<)
+| (s:BufL2, a:'x0,z:'x3)      		-> (s:BufL2, ozz:'x3, oz:'x0)
+| (s:BufL2, a:'>, z:'>)       		-> (s:WaitNewL, ozz:'>, oz:'>)
+| (s:WaitNewL, a:'<, z:'<, zz:'<)   -> (s:Bufpix1, c:'<, ozz:'<, oz:'<)
+| (s:WaitNewL, a:'>)  				-> (s:WaitSoF,c:'>)
+| (s:Bufpix1, a:'x0, z:'x3, zz:'x6) -> (s:Bufpix2, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Bufpix2, a:'x0, z:'x3, zz:'x6) -> (s:Conv, x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Conv, a:'x0, z:'x3, zz:'x6) 	->
+    (s:Conv,
+     c: let  cc = k[0]*x0+k[1]*x1+k[2]*x2+k[3]*x3+k[4]*x4+k[5]*x5+k[6]*x6+k[7]*x7+k[8]*x8
+        in 'cc>>n, x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Conv, a:'>, z:'>, zz:'>)         -> (s:WaitNewL, c:'>, ozz:'>, oz:'>)
+;
+
+net conv233c_wb_opt kernel norm i = let rec (o,z,zz) = conv33 (kernel,norm) (i,z,zz) in o;
+
+-- TODOOOOOOOOOOOOOOOO: add stride (maybe in x and y)
+
+actor conv2u55_wb_a (k:int<s,m> array[25], n:unsigned<8>)
+  in (a:int<s,m> dc,    -- input
+      z:int<s,m> dc,    
+     zz:int<s,m> dc,    
+    zzz:int<s,m> dc,    
+   zzzz:int<s,m> dc)    
+   
+ out (c:  int<s,m> dc,  -- output
+      oz:int<s,m> dc,   
+     ozz:int<s,m> dc,
+	ozzz:int<s,m> dc,   
+   ozzzz:int<s,m> dc)   
+
+var s : {WaitSoF,WaitSoL1,BufL1,WaitSoL2,BufL2,WaitSoL3,BufL3,WaitSoL4,BufL4,WaitNewL,Bufpix1,Bufpix2,Bufpix3,Bufpix4,Conv} = WaitSoF
+
+var x1 :int<s,m>
+var x2 :int<s,m>
+var x3 :int<s,m>
+var x4 :int<s,m>
+
+var x6 :int<s,m>
+var x7 :int<s,m>
+var x8 :int<s,m>
+var x9 :int<s,m>
+
+var x11 :int<s,m>
+var x12 :int<s,m>
+var x13 :int<s,m>
+var x14 :int<s,m>
+
+var x16 :int<s,m>
+var x17 :int<s,m>
+var x18 :int<s,m>
+var x19 :int<s,m>
+
+var x21 :int<s,m>
+var x22 :int<s,m>
+var x23 :int<s,m>
+var x24 :int<s,m>
+
+
+rules
+| (s:WaitSoF , a:'<)          		-> (s:WaitSoL1, c:'<)
+--
+-- BUFFER L1
+| (s:WaitSoL1, a:'<, z:'<, zz:'<,zzz:'<, zzzz:'<) 	-> (s:BufL1, oz:'<) -- cleaning fifo rules after first image
+| (s:WaitSoL1, a:'<)          		-> (s:BufL1, oz:'<)
+| (s:BufL1, a:'x0, 	z:'d, zz:'e, zzz:'f, zzz:'g )  -> (s:BufL1, oz:'x0)-- cleaning fifo rules after first image
+| (s:BufL1, a:'x0)             		-> (s:BufL1, oz:'x0)
+| (s:BufL1, a:'>,	z:'>, zz:'>, zzz:'>, zzzz:'>)     -> (s:WaitSoL2, oz:'>)-- cleaning fifo rules after first image
+| (s:BufL1, a:'>)             		-> (s:WaitSoL2, oz:'>)
+--
+-- BUFFER L2
+| (s:WaitSoL2, a:'<, z:'<)    		-> (s:BufL2, ozz:'<, oz:'<)
+| (s:BufL2, a:'x0, z:'x5)      		-> (s:BufL2, ozz:'x5, oz:'x0)
+| (s:BufL2, a:'>, z:'>)       		-> (s:WaitSoL3, ozz:'>, oz:'>)
+--
+-- BUFFER L3
+| (s:WaitSoL3, a:'<, z:'<, zz:'<)   -> (s:BufL3, ozzz:'<, ozz:'<, oz:'<)
+| (s:BufL3, a:'x0, z:'x5, zz:'x10)  -> (s:BufL3, ozzz:'x10, ozz:'x5, oz:'x0)
+| (s:BufL3, a:'>, z:'>, zz:'>)      -> (s:WaitSoL4, ozzz:'>, ozz:'>, oz:'>)
+--
+-- BUFFER L4
+| (s:WaitSoL4, a:'<, z:'<, zz:'<, zzz:'<)     -> (s:BufL4, ozzzz:'<, ozzz:'<, ozz:'<, oz:'<)
+| (s:BufL4, a:'x0, z:'x5, zz:'x10, zzz:'x15)  -> (s:BufL4, ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)
+| (s:BufL4, a:'>, z:'>, zz:'>, zzz:'>)        -> (s:WaitNewL, ozzzz:'>, ozzz:'>, ozz:'>, oz:'>)
+
+| (s:WaitNewL, a:'>)  -> (s:WaitSoF,c:'>)
+| (s:WaitNewL, a:'<, z:'<, zz:'<,zzz:'<, zzzz:'<)   -> (s:Bufpix1, c:'<,  ozzzz:'<, ozzz:'<, ozz:'<, oz:'<)
+
+| (s:Bufpix1, a:'x0, z:'x5, zz:'x10, zzz:'x15, zzzz:'x20)  -> (s:Bufpix2, 
+			x21:x20, x16:x15, x11:x10, x6:x5, x1:x0,
+			ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)
+ 
+| (s:Bufpix2,  a:'x0, z:'x5, zz:'x10, zzz:'x15, zzzz:'x20) -> (s:Bufpix3, 
+	x22:x21, x17:x16, x12:x11, x7:x6, x2:x1,
+	x21:x20, x16:x15, x11:x10, x6:x5, x1:x0,
+	ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)
+	
+| (s:Bufpix3,  a:'x0, z:'x5, zz:'x10, zzz:'x15, zzzz:'x20) -> (s:Bufpix4, 
+	x23:x22, x18:x17, x13:x12, x8:x7, x3:x2,
+	x22:x21, x17:x16, x12:x11, x7:x6, x2:x1,
+	x21:x20, x16:x15, x11:x10, x6:x5, x1:x0,
+	ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)
+	
+| (s:Bufpix4,  a:'x0, z:'x5, zz:'x10, zzz:'x15, zzzz:'x20) -> (s:Conv, 
+	x24:x23, x19:x18, x14:x13, x9:x8, x4:x3,
+	x23:x22, x18:x17, x13:x12, x8:x7, x3:x2,
+	x22:x21, x17:x16, x12:x11, x7:x6, x2:x1,
+	x21:x20, x16:x15, x11:x10, x6:x5, x1:x0,
+	ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)	
+	
+| (s:Conv, a:'x0, z:'x5, zz:'x10, zzz:'x15, zzzz:'x20) ->
+    (s:Conv,
+     c: let  cc = k[0]*x0+k[1]*x1+k[2]*x2+k[3]*x3+k[4]*x4+k[5]*x5+k[6]*x6+k[7]*x7+k[8]*x8+
+				  k[9]*x9+k[10]*x10+k[11]*x11+k[12]*x12+k[13]*x13+k[14]*x14+k[15]*x15+k[16]*x16+k[17]*x17+
+				  k[18]*x18+k[19]*x19+k[20]*x20+k[21]*x21+k[22]*x22+k[23]*x23+k[24]*x24
+        in 'cc>>n, 
+		x24:x23, x19:x18, x14:x13, x9:x8, x4:x3,
+		x23:x22, x18:x17, x13:x12, x8:x7, x3:x2,
+		x22:x21, x17:x16, x12:x11, x7:x6, x2:x1,
+		x21:x20, x16:x15, x11:x10, x6:x5, x1:x0,
+		ozzzz:'x15, ozzz:'x10, ozz:'x5, oz:'x0)	
+
+| (s:Conv, a:'>, z:'>, zz:'>,zzz:'>,zzzz:'>) -> (s:WaitNewL, c:'>, ozzzz:'>, ozzz:'>, ozz:'>, oz:'>)
+;
+
+net conv2u55_wb kernel norm i = let rec (o,z,zz,zzz,zzzz) = conv2u55_wb_a (kernel,norm) (i,z,zz,zzz,zzzz) in o;
+
+

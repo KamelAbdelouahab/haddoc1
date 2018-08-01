@@ -24,7 +24,7 @@ def genCaph_Headers(caph_net_filename):
     #-- Fichiers generes par le programme c++)
     f.write("#include \"dotdc.cph\"\n");
     f.write("#include \"fc_distri_act.cph\"\n")
-    f.write("#include \"fc_map_gen.cph\"\n")
+    #-- f.write("#include \"fc_map_gen.cph\"\n")
     f.write("#include \"sumdc.cph\"\n \n")
     f.close()
 
@@ -48,7 +48,7 @@ def genCaph_CNN(network,caph_net_filename,caph_dataype,acteurconv,shiftnorm):
                 name_wire_previous = name_wire_relu
             else:
                 generateConvLayer(caph_net_filename,Params[layer][0].data,name_wire_previous,acteurconv,name_weights+str(layer),shiftnorm,name_biais+str(layer),name_wire+str(layer),Params[layer][0].data.shape[1])
-        if 's'    in layer:
+        if 'pool' in layer:
             generatePoolingLayer(caph_net_filename, name_wire_previous, Params[layer_previous][0].data.shape[0], name_wire+str(layer), 'pool');
 
         if 'conv1' not in layer:
@@ -69,7 +69,7 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
        if 'label' in b or 'cla' in b or 'data' in b:
          del Blobs[b]
     for layer in list(Blobs.keys()):
-        if 'fc' not in layer:
+        if 'ip' not in layer:
             previous_layer = layer
         else:
             repsize         = network.blobs['conv1'].data.shape[1]
@@ -82,13 +82,14 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
             nbclass         = nb_unit_fc
             sizesum1        = network.blobs['conv1'].data.shape[1]
             sizesum2        = network.blobs['conv2'].data.shape[1]
+            sizesum3        = network.blobs['conv3'].data.shape[1]
 
-    # f= open(caph_net_filename,'a')
+    f= open(caph_net_filename,'a')
     # # Include the FC layer generated file (with GENC.EXE)
     # f.write("\n #include \"fc_layer_gen.cph\"\n");
-    # # Output streams
-    # f.write("\nstream i:"+caph_dataype+"dc from \"sample.txt\";\n");
-    for nb in range(nbclass):
+    # Output streams
+    f.write("\nstream i:"+caph_dataype+"dc from \"sample.txt\";\n");
+    for nb in range(sizesum3):
        f.write("stream w_pool3%d : " %nb)
        f.write("%s dc " %caph_dataype)
        f.write("to \"w_pool3%d.txt\";\n" %nb)
@@ -100,11 +101,24 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
     os.environ["GLOG_minloglevel"] = "1"
     print(subprocess.Popen(C2V_CPP_LIB + "/gen_cnn_code %d %d %d %d %d %d %d %s %s %d %s %s" %(repsize,sizesum1,sizesum2,nfeat,nx_feat,ny_feat,nb_unit_fc,fc_wirename_in,fc_wirename_out,nbclass,"y_",datatype), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
     os.environ["GLOG_minloglevel"] = "0"
-    print(subprocess.Popen("cp -R  " + C2V_DIRNAME + "/cnn "    + C2V_CPP_LIB , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
-    print(subprocess.Popen("cp -R  " + C2V_DIRNAME + "/utils "  + C2V_CPP_LIB , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
-
-    print(subprocess.Popen("rm -rf " + C2V_DIRNAME + "/cnn "    , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
-    print(subprocess.Popen("rm -rf " + C2V_DIRNAME + "/utils "  , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
+    print(subprocess.Popen("cp -R  " + "/home/kamel/dev/haddoc1/cnn " +
+                            "/home/kamel/dev/haddoc1/caph_generated" ,
+                            shell=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT).stdout.read())
+    print(subprocess.Popen("cp -R  " + "/home/kamel/dev/haddoc1/utils "+
+                            "/home/kamel/dev/haddoc1/caph_generated" ,
+                            shell=True,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT).stdout.read())
+    #print(subprocess.Popen("rm -rf " + "/home/kamel/dev/haddoc1/cnn",
+    #                        shell=True,
+    #                        stdout=subprocess.PIPE,
+    #                        stderr=subprocess.STDOUT).stdout.read())
+    #print(subprocess.Popen("rm -rf " + "/home/kamel/dev/haddoc1/utils",
+    #                       shell=True,
+    #                       stdout=subprocess.PIPE,
+    #                       stderr=subprocess.STDOUT).stdout.read())
 
 # =======================================================================================================#
 def generateFirstLayer(caph_net_filename,filters_conv1,name_wire_input,acteurconv,name_weights_conv1,shiftnorm,name_biais_conv1,name_wire_relu,name_wire_output_conv1):

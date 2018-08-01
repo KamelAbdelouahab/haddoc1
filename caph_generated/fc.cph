@@ -1,0 +1,87 @@
+
+actor dot2
+ in (i1: int<s,m> dc, i2: int<s,m> dc)
+ out (o: int<s,m> dc)
+rules
+| (i1:'<, i2:'<) -> o:'<
+| (i1:'>, i2:'>) -> o:'>
+| (i1:'a, i2:'b) -> o:'(a*b);
+
+
+actor sum2
+ in (i1: int<s,m> dc, i2: int<s,m> dc)
+ out (o: int<s,m> dc)
+rules
+| (i1:'<, i2:'<) -> o:'<
+| (i1:'>, i2:'>) -> o:'>
+| (i1:'a, i2:'b) -> o:'(a+b);
+
+
+-- -- Acteur de distributions: Attention aux types
+-- actor distr (wi:signed<32>array[4][36], n:unsigned<8>,m:unsigned<8>)
+--  in (ii: signed<s> dc)
+--  out(k0: signed<s> dc,k1: signed<s> dc,k2: signed<s> dc,k3: signed<s> dc)
+--  
+-- var s : {WaitSF, WaitSL, Kern} = WaitSF
+-- var i : unsigned<8>
+-- var j : unsigned<8>
+-- var k : unsigned<8>
+-- rules 
+-- |(s:WaitSF, ii:'<) -> (s:WaitSL, k0:'<,k1:'<,k2:'<,k3:'<,i:0)
+-- |(s:WaitSL, ii:'>) -> (s:WaitSF, k0:'>,k1:'>,k2:'>,k3:'>)
+-- |(s:WaitSL, ii:'<) -> (s:Kern,   k0:'<,k1:'<,k2:'<,k3:'<, j:0)
+-- |(s:Kern, ii:'x)   -> (s:Kern, 
+-- 					k0: 'wi[0][(i*m)+j],
+-- 					k1: 'wi[1][(i*m)+j],
+-- 					k2: 'wi[2][(i*m)+j],
+-- 					k3: 'wi[3][(i*m)+j],
+-- 					j:  if j<(m-1) then j+1 else  0)
+-- |(s:Kern, ii:'>)   -> (s:WaitSL, k0:'>,k1:'>,k2:'>,k3:'>,i: if i<(n-1) then i+1 else 0)
+-- ;
+-- 
+-- 
+-- 
+-- actor dot20()
+-- in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc,i6:int<s,m> dc,i7:int<s,m> dc,i8:int<s,m> dc,i9:int<s,m> dc,i10:int<s,m> dc,i11:int<s,m> dc,i12:int<s,m> dc,i13:int<s,m> dc,i14:int<s,m> dc,i15:int<s,m> dc,i16:int<s,m> dc,i17:int<s,m> dc,i18:int<s,m> dc,i19:int<s,m> dc) 
+-- out(o:int<s,m> dc) 
+-- rules
+-- |(i0:'<,i1:'<,i2:'<,i3:'<,i4:'<,i5:'<,i6:'<,i7:'<,i8:'<,i9:'<,i10:'<,i11:'<,i12:'<,i13:'<,i14:'<,i15:'<,i16:'<,i17:'<,i18:'<,i19:'<) -> (o:'<)
+-- |(i0:'>,i1:'>,i2:'>,i3:'>,i4:'>,i5:'>,i6:'>,i7:'>,i8:'>,i9:'>,i10:'>,i11:'>,i12:'>,i13:'>,i14:'>,i15:'>,i16:'>,i17:'>,i18:'>,i19:'>) -> (o:'>)
+-- |(i0:'x0,i1:'x1,i2:'x2,i3:'x3,i4:'x4,i5:'x5,i6:'x6,i7:'x7,i8:'x8,i9:'x9,i10:'x10,
+-- i11:'x11,i12:'x12,i13:'x13,i14:'x14,i15:'x15,i16:'x16,i17:'x17,i18:'x18,i19:'x19)-> 
+-- (o:'(x0*x10+x1*x11+x2*x12+x3*x13+x4*x14+x5*x15+x6*x16+x7*x17+x8*x18+x9*x19))
+-- ;
+-- 
+-- 
+-- actor distr10 (wi:signed<32>array[10][16], n:unsigned<8>,m:unsigned<8>)
+--  in (ii: signed<s> dc)
+--  out(k0: signed<s> dc,k1: signed<s> dc,k2: signed<s> dc,k3: signed<s> dc,
+--      k4: signed<s> dc,k5: signed<s> dc,k6: signed<s> dc,k7: signed<s> dc,
+--      k8: signed<s> dc,k9: signed<s> dc )
+--  
+-- var s : {WaitSF, WaitSL, Kern} = WaitSF
+-- var i : unsigned<8>
+-- var j : unsigned<8>
+-- var k : unsigned<8>
+-- rules 
+-- |(s:WaitSF, ii:'<) -> (s:WaitSL, k0:'<,k1:'<,k2:'<,k3:'<,k4:'<,k5:'<,k6:'<,k7:'<,k8:'<,k9:'<,i:0)
+-- |(s:WaitSL, ii:'>) -> (s:WaitSF, k0:'>,k1:'>,k2:'>,k3:'>,k4:'>,k5:'>,k6:'>,k7:'>,k8:'>,k9:'>)
+-- |(s:WaitSL, ii:'<) -> (s:Kern,   k0:'<,k1:'<,k2:'<,k3:'<,k4:'<,k5:'<,k6:'<,k7:'<,k8:'<,k9:'<, j:0)
+-- |(s:Kern, ii:'x)   -> (s:Kern, 
+-- 					k0: 'wi[0][(i*m)+j],
+-- 					k1: 'wi[1][(i*m)+j],
+-- 					k2: 'wi[2][(i*m)+j],
+-- 					k3: 'wi[3][(i*m)+j],
+-- 					k4: 'wi[4][(i*m)+j],
+-- 					k5: 'wi[5][(i*m)+j],
+-- 					k6: 'wi[6][(i*m)+j],
+-- 					k7: 'wi[7][(i*m)+j],
+-- 					k8: 'wi[8][(i*m)+j],
+-- 					k9: 'wi[9][(i*m)+j],
+-- 					
+-- 					j:  if j<(m-1) then j+1 else  0)
+-- |(s:Kern, ii:'>)   -> (s:WaitSL, k0:'>,k1:'>,k2:'>,k3:'>,k4:'>,k5:'>,k6:'>,k7:'>,k8:'>,k9:'>,i: if i<(n-1) then i+1 else 0)
+-- ;
+
+
+

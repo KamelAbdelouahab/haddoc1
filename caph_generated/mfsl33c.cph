@@ -1,0 +1,97 @@
+
+#include "convol.cph"
+
+--   +----+----+----+
+--   | c8 | c7 | c6 |
+--   +----+----+----+
+--   | c5 | c4<|-c3-|--current pixel
+--   +----+----+----+
+--   | c2 | c1 | c0 |
+--   +----+----+----+
+
+actor msfl_33c(v:signed<m>)
+  in (a:signed<m> dc,    -- input
+      z:signed<m> dc,    -- previous line  (fed back through an external link)
+     zz:signed<m> dc)    -- pre-previous line  (fed back through an external link)
+ out (c0:  signed<m> dc,  -- output
+      c1:  signed<m> dc,  -- output
+	  c2:  signed<m> dc,  -- output
+	  c3:  signed<m> dc,  -- output
+	  c4:  signed<m> dc,  -- output
+	  c5:  signed<m> dc,  -- output
+	  c6:  signed<m> dc,  -- output
+	  c7:  signed<m> dc,  -- output
+	  c8:  signed<m> dc,  -- output
+      oz:signed<m> dc,   -- previous line  (fed back through an external link)
+	  
+     ozz:signed<m> dc)   -- previous line  (fed back through an external link)
+
+var s : {WaitSoF,WaitSoL1,BufL1,WaitSoL2,BufL2,WaitNewL,Bufpix1,Bufpix2,Prod,Dumpixel,Dumptok,Dumpline,DumpEoF} = WaitSoF
+
+var x1 :signed<m>
+var x2 :signed<m>
+var x4 :signed<m>
+var x5 :signed<m>
+var x7 :signed<m>
+var x8 :signed<m>
+
+rules
+| (s:WaitSoF , a:'<)          -> (s:WaitSoL1, c0:'<, c1:'<, c2:'<, c3:'<, c4:'<, c5:'<, c6:'<, c7:'<, c8:'<)
+| (s:WaitSoL1, a:'<)          -> (s:BufL1, oz:'<)
+| (s:BufL1, a:'p)             -> (s:BufL1, oz:'p)
+| (s:BufL1, a:'>)             -> (s:WaitSoL2, oz:'>)
+| (s:WaitSoL2, a:'<, z:'<)    -> (s:BufL2, c0:'<, c1:'<, c2:'<, c3:'<, c4:'<, c5:'<, c6:'<, c7:'<, c8:'<, ozz:'<, oz:'<)
+| (s:BufL2, a:'x0,z:'x3)      -> (s:BufL2, c0:'v, c1:'v, c2:'v, c3:'v, c4:'v, c5:'v, c6:'v, c7:'v, c8:'v, ozz:'x3, oz:'x0)
+| (s:BufL2, a:'>, z:'>)       -> (s:WaitNewL, c0:'>, c1:'>, c2:'>, c3:'>, c4:'>, c5:'>, c6:'>, c7:'>, c8:'>, ozz:'>, oz:'>)
+| (s:WaitNewL, a:'<, z:'<, zz:'<)  -> (s:Bufpix1, c0:'<, c1:'<, c2:'<, c3:'<, c4:'<, c5:'<, c6:'<, c7:'< ,c8:'<, ozz:'<, oz:'<)
+| (s:WaitNewL, a:'>)  -> (s:Dumptok, ozz:'>, oz:'>)
+| (s:Bufpix1, a:'x0, z:'x3, zz:'x6)  -> (s:Bufpix2, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Bufpix2, a:'x0, z:'x3, zz:'x6) -> (s:Prod, c0:'v, c1:'v, c2:'v, c3:'v, c4:'v, c5:'v, c6:'v, c7:'v,c8:'v,
+												x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Prod, a:'x0, z:'x3, zz:'x6) ->
+  (s:Prod, c0:'x0, c1:'x1, c2:'x2, c3:'x3, c4:'x4, c5:'x5, c6:'x6, c7:'x7, c8:'x8,
+			 x8:x7, x5:x4, x2:x1, x7:x6, x4:x3, x1:x0, ozz:'x3, oz:'x0)
+| (s:Prod, a:'>, z:'>, zz:'>)         -> (s:Dumpixel, c0:'v, c1:'v, c2:'v, c3:'v, c4:'v, c5:'v, c6:'v, c7:'v,  c8:'v, ozz:'>, oz:'>)
+| (s:Dumpixel )  -> (s:WaitNewL, c0:'>, c1:'>, c2:'>, c3:'>, c4:'>, c5:'>, c6:'>, c7:'> , c8:'> )             -- this requires horizontal blanking
+| (s:Dumptok, z:'<, zz:'< )  -> (s:Dumpline, c0:'<, c1:'<, c2:'<, c3:'<, c4:'<, c5:'<, c6:'<, c7:'<, c8:'<) -- this requires vertical blanking (at least > image width)
+| (s:Dumpline, z:'x, zz:'y) -> (s:Dumpline, c0:'v, c1:'v, c2:'v, c3:'v, c4:'v, c5:'v, c6:'v, c7:'v, c8:'v)
+| (s:Dumpline, z:'>, zz:'>) -> (s:DumpEoF, c0:'>, c1:'>, c2:'>, c3:'>, c4:'>, c5:'>, c6:'>, c7:'> , c8:'> )
+| (s:DumpEoF, z:'>,zz:'>) -> (s:WaitSoF, c0:'>, c1:'>, c2:'>, c3:'>, c4:'>, c5:'>, c6:'>, c7:'>, c8:'>  )
+;
+net mfsl33c_m  pad i = 
+	let rec (o0,o1,o2,o3,o4,o5,o6,o7,o8,z,zz) = msfl_33c (pad) (i,z,zz) in 
+		(o0,o1,o2,o3,o4,o5,o6,o7,o8);
+
+actor add3x3(k:signed<19> array[9], n:unsigned<4>)
+	in(
+	  c0:  signed<m> dc,  
+      c1:  signed<m> dc,  
+	  c2:  signed<m> dc,  
+	  c3:  signed<m> dc,  
+	  c4:  signed<m> dc,  
+	  c5:  signed<m> dc,  
+	  c6:  signed<m> dc,  
+	  c7:  signed<m> dc,
+	  c8:  signed<m> dc)
+	out(o: signed<m> dc)
+rules
+| (c0:'<, c1:'<, c2:'<, c3:'<, c4:'<, c5:'<, c6:'<, c7:'<, c8:'<) -> o:'<
+| (c0:'>, c1:'>, c2:'>, c3:'>, c4:'>, c5:'>, c6:'>, c7:'>, c8:'>) -> o:'>
+| (c0:'x0, c1:'x1, c2:'x2, c3:'x3, c4:'x4, c5:'x5, c6:'x6, c7:'x7, c8:'x8)->
+	o: let  cc = k[0]*x0+k[1]*x1+k[2]*x2+k[3]*x3+k[4]*x4+k[5]*x5+k[6]*x6+k[7]*x7+k[8]*x8
+        in 'cc>>n
+;
+
+const kernel = [-12S, 512,14, -19, 1, 10, -49, -2,48]:signed<19>array[9];
+const shift  = 9 : unsigned<4>;
+
+net o0 = add3x3 (kernel,shift) (mfsl33c_m 0 i);
+net t0 = conv233c kernel shift 0 i;
+
+----------------------------------------------------------------
+-- I/Os 
+----------------------------------------------------------------
+stream i: signed<19> dc from %arg1;
+
+stream  t0 : signed<19> dc to "res/t0.txt";
+stream  o0 : signed<19> dc to "res/o0.txt";
