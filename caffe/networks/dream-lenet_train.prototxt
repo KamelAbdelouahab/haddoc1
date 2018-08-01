@@ -10,7 +10,7 @@ layer { name: "mnist"
     scale: 0.00390625
   }
   data_param {
-    source: "/home/kamel/datasets/mnist/mnist_train"
+    source: "/home/kamel/datasets/mnist/mnist28_train"
     batch_size: 64
     backend: LMDB
   }
@@ -26,7 +26,7 @@ layer { name: "mnist"
     scale: 0.00390625
   }
   data_param {
-    source: "/home/kamel/datasets/usps/usps28_test"
+    source: "/home/kamel/datasets/mnist/mnist28_test"
     batch_size: 100
     backend: LMDB
   }

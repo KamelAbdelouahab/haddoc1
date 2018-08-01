@@ -1,37 +1,13 @@
 name: "LeNet"
-layer { name: "mnist"
-  type: "Data"
+layer {
+  name: "data"
+  type: "Input"
   top: "data"
-  top: "label"
-  include {
-    phase: TRAIN
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "/home/kamel/datasets/mnist/mnist_train"
-    batch_size: 64
-    backend: LMDB
-  }
+  input_param { shape: { dim: 64 dim: 1 dim: 28 dim: 28 } }
 }
-layer { name: "mnist"
-  type: "Data"
-  top: "data"
-  top: "label"
-  include {
-    phase: TEST
-  }
-  transform_param {
-    scale: 0.00390625
-  }
-  data_param {
-    source: "/home/kamel/datasets/usps/usps28_test"
-    batch_size: 100
-    backend: LMDB
-  }
-}
-layer { name: "conv1"
+
+layer {
+  name: "conv1"
   type: "Convolution"
   bottom: "data"
   top: "conv1"
@@ -53,12 +29,15 @@ layer { name: "conv1"
     }
   }
 }
-layer { name: "tanh1"
+
+layer {
+  name: "tanh1"
   type: "TanH"
   bottom: "conv1"
   top: "conv1"
 }
-layer { name: "pool1"
+layer {
+  name: "pool1"
   type: "Pooling"
   bottom: "conv1"
   top: "pool1"
@@ -96,6 +75,7 @@ layer { name: "tanh2"
   top: "conv2"
 }
 layer { name: "pool2"
+  name: "pool2"
   type: "Pooling"
   bottom: "conv2"
   top: "pool2"
@@ -142,7 +122,8 @@ layer { name: "pool3"
     stride: 2
   }
 }
-layer { name: "ip1"
+layer {
+  name: "ip1"
   type: "InnerProduct"
   bottom: "pool3"
   top: "ip1"
@@ -162,7 +143,8 @@ layer { name: "ip1"
     }
   }
 }
-layer { name: "ip2"
+layer {
+  name: "ip2"
   type: "InnerProduct"
   bottom: "ip1"
   top: "ip2"
@@ -182,18 +164,10 @@ layer { name: "ip2"
     }
   }
 }
-layer { name: "accuracy"
-  type: "Accuracy"
+
+layer {
+  name: "softmax"
+  type: "Softmax"
   bottom: "ip2"
-  bottom: "label"
-  top: "accuracy"
-  include {
-    phase: TEST
-  }
-}
-layer { name: "loss"
-  type: "SoftmaxWithLoss"
-  bottom: "ip2"
-  bottom: "label"
-  top: "loss"
+  top: "softmax"
 }
