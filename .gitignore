@@ -8,6 +8,9 @@ example/
 *.h
 *.cpp
 
+#python
+*.pyc
+
 #generated hdl
 *.vhd
 */vhdl
@@ -27,3 +30,5 @@ example/
 # caffe tmp
 *.solverstate
 *.h5
+
+caph_generated
