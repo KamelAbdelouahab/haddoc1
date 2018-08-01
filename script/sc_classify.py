@@ -18,19 +18,19 @@ sys.path.insert(0, C2V_PYTHON_LIB)
 from utils_lib      import *
 
 if (len(sys.argv) == 1):
-	print('\033[93m' + "Backdoor  : Using the DreamNet network ... " + '\033[0m')
-	prototxt    = '../example/dreamnet/train.prototxt'
-	caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
-	feature_dir = CAPH_GENERATED
+    print('\033[93m' + "Backdoor  : Using the DreamNet network ... " + '')
+    prototxt    = '../example/dreamnet/train.prototxt'
+    caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
+    feature_dir = CAPH_GENERATED
 
 else:
     if (len(sys.argv) != 4):
         sys.exit("Not enough args!")
     else:
-		prototxt    = sys.argv[1]
-		caffemodel  = sys.argv[2]
-		feature_dir = sys.argv[3]
-print('\033[94m' + "     RUNNING CLASSIFICATION USING SYSTEMC SIM RESULTS ...  " + '\033[0m')
+        prototxt    = sys.argv[1]
+        caffemodel  = sys.argv[2]
+        feature_dir = sys.argv[3]
+print('\033[94m' + "     RUNNING CLASSIFICATION USING SYSTEMC SIM RESULTS ...  " + '')
 
 #SUPRESS CAFFE DISPLAY WHEN CREATING NETWORK
 os.environ["GLOG_minloglevel"] = "1"

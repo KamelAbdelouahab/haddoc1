@@ -102,39 +102,39 @@ def GenerateConvCst(filename, name, filter_fixedpt, biais_fixedpt,caph_dataype):
         f.write("\n\n")
 
 def GenerateFirstConvCst(filename,layer,scale_factor,caph_dataype):
-	#Recuperer les valeurs des Kernels depuis le caffe_model + Application du facteur d'echelle
-	filters_conv1 = np.array(np.round(scale_factor*layer[0].data),dtype=int)
-	name_weights_conv1="weights_conv1"
-	name_biais_conv1="biais_conv1"
+    #Recuperer les valeurs des Kernels depuis le caffe_model + Application du facteur d'echelle
+    filters_conv1 = np.array(np.round(scale_factor*layer[0].data),dtype=int)
+    name_weights_conv1="weights_conv1"
+    name_biais_conv1="biais_conv1"
 
-	f= open(filename,'w');
-	f.write("const %s = [\n" %name_weights_conv1)
-	for nb in range(filters_conv1.shape[0]): # recuperer le nombre de kernels
-		f.write("\t[")
-		for i in range(filters_conv1.shape[2]):
-			for j in range(filters_conv1.shape[3]):
-				f.write("%d" % filters_conv1[nb][0][filters_conv1.shape[2]-i-1][filters_conv1.shape[3]-j-1])
-				if ( i == (filters_conv1.shape[2]-1) and (j ==filters_conv1.shape[2]-1)):
-					f.write(" ")
-				else:
-					f.write(",")
+    f= open(filename,'w');
+    f.write("const %s = [\n" %name_weights_conv1)
+    for nb in range(filters_conv1.shape[0]): # recuperer le nombre de kernels
+        f.write("\t[")
+        for i in range(filters_conv1.shape[2]):
+            for j in range(filters_conv1.shape[3]):
+                f.write("%d" % filters_conv1[nb][0][filters_conv1.shape[2]-i-1][filters_conv1.shape[3]-j-1])
+                if ( i == (filters_conv1.shape[2]-1) and (j ==filters_conv1.shape[2]-1)):
+                    f.write(" ")
+                else:
+                    f.write(",")
 
-		if (nb < (filters_conv1.shape[0]-1)):
-			f.write("],\n")
-		else:
-			f.write(" ] ] : " + caph_dataype +" array[%d][9];\n" %filters_conv1.shape[0] )
+        if (nb < (filters_conv1.shape[0]-1)):
+            f.write("],\n")
+        else:
+            f.write(" ] ] : " + caph_dataype +" array[%d][9];\n" %filters_conv1.shape[0] )
 
-	filters_conv1_b= np.array(np.round(scale_factor*layer[1].data),dtype=int)
-	#~ filters_conv1_b= deepcopy(layer[1].data);
-	# Ecrit la premiere liste de biais
-	f.write("const %s= [" %name_biais_conv1)
-	for i in range(filters_conv1_b.shape[0]):
-		if (i < (filters_conv1_b.shape[0]-1)):
-			f.write("%d, " %filters_conv1_b[i])
-		else:
-			f.write("%d] : " % filters_conv1_b[i])
-			f.write( caph_dataype+" array[%d];" %filters_conv1_b.shape[0])
+    filters_conv1_b= np.array(np.round(scale_factor*layer[1].data),dtype=int)
+    #~ filters_conv1_b= deepcopy(layer[1].data);
+    # Ecrit la premiere liste de biais
+    f.write("const %s= [" %name_biais_conv1)
+    for i in range(filters_conv1_b.shape[0]):
+        if (i < (filters_conv1_b.shape[0]-1)):
+            f.write("%d, " %filters_conv1_b[i])
+        else:
+            f.write("%d] : " % filters_conv1_b[i])
+            f.write( caph_dataype+" array[%d];" %filters_conv1_b.shape[0])
 
-	f.write("\n \n")
+    f.write("\n \n")
 
 # ==========================================================================================================

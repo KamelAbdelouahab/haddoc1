@@ -39,8 +39,8 @@ def genCaph_CNN(network,caph_net_filename,caph_dataype,acteurconv,shiftnorm):
     name_biais          =   "biais_"
 
     for b in list(Blobs.keys()):
-		if 'label' in b or 'cla' in b or 'data' in b:
-			del Blobs[b]
+        if 'label' in b or 'cla' in b or 'data' in b:
+            del Blobs[b]
     for layer in list(Blobs.keys()):
         if 'conv' in layer:
             if 'conv1' in layer:
@@ -64,9 +64,10 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
         #   la taille des features
         #   ... les trucs utiles pour genc
     Blobs   = network.blobs;
+    nbclass = 10;
     for b in list(Blobs.keys()):
-	   if 'label' in b or 'cla' in b or 'data' in b:
-	     del Blobs[b]
+       if 'label' in b or 'cla' in b or 'data' in b:
+         del Blobs[b]
     for layer in list(Blobs.keys()):
         if 'fc' not in layer:
             previous_layer = layer
@@ -81,22 +82,21 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
             nbclass         = nb_unit_fc
             sizesum1        = network.blobs['conv1'].data.shape[1]
             sizesum2        = network.blobs['conv2'].data.shape[1]
-            # NB : SIZESUM...
 
-    f= open(caph_net_filename,'a')
-    # Include the FC layer generated file (with GENC.EXE)
-    f.write("\n #include \"fc_layer_gen.cph\"\n");
-    # Output streams
-    f.write("\nstream i:"+caph_dataype+"dc from \"sample.txt\";\n");
+    # f= open(caph_net_filename,'a')
+    # # Include the FC layer generated file (with GENC.EXE)
+    # f.write("\n #include \"fc_layer_gen.cph\"\n");
+    # # Output streams
+    # f.write("\nstream i:"+caph_dataype+"dc from \"sample.txt\";\n");
     for nb in range(nbclass):
-       f.write("stream w_fc%d : " %nb)
+       f.write("stream w_pool3%d : " %nb)
        f.write("%s dc " %caph_dataype)
-       f.write("to \"w_fc%d.txt\";\n" %nb)
+       f.write("to \"w_pool3%d.txt\";\n" %nb)
     f.close()
 
     # datatype= caph_dataype.replace("<","\<").replace(">","\>")
     datatype= "signed\<32\>"
-    print('\033[94m' "\n > Lunching gen_cnn_code with parameters:"+ '\033[0m')
+    print('\033[94m' "\n > Lunching gen_cnn_code with parameters:"+ '')
     os.environ["GLOG_minloglevel"] = "1"
     print(subprocess.Popen(C2V_CPP_LIB + "/gen_cnn_code %d %d %d %d %d %d %d %s %s %d %s %s" %(repsize,sizesum1,sizesum2,nfeat,nx_feat,ny_feat,nb_unit_fc,fc_wirename_in,fc_wirename_out,nbclass,"y_",datatype), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
     os.environ["GLOG_minloglevel"] = "0"

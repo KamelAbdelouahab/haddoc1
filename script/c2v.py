@@ -9,9 +9,6 @@ C2V_CPP_LIB         = C2V_DIRNAME + '/lib/cpp'
 CAPH_GENERATED      = C2V_DIRNAME + '/../caph_generated'
 
 
-#BACKDOOR
-
-sys.path.insert(0, CAFFE_PYTHON_LIB)
 sys.path.insert(0, C2V_PYTHON_LIB)
 
 
@@ -23,40 +20,44 @@ import subprocess
 import math
 
 
-print('\033[4m' '\033[94m' "\n > THIS IS HADOC HLS TOOL \n" '\033[0m')
+print("THIS IS HADOC HLS TOOL \n")
 
-if (len(sys.argv) == 1):
-    print('\033[92m' " \t Backdoor 1 : Using the DreamNet network with 6 bits for parameter representation " '\033[0m')
-    prototxt    = '../example/dreamnet/train.prototxt'
-    caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
-    nb_bits     = 6
+# if (len(sys.argv) == 1):
+#     print(" \t Backdoor 1 : Using the DreamNet network with 6 bits for parameter representation " '')
+#     prototxt    = '../example/dreamnet/train.prototxt'
+#     caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
+#     nb_bits     = 6
+#
+# else:
+#     if (len(sys.argv) == 2):
+#         prototxt    = '../example/dreamnet/train.prototxt'
+#         caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
+#         nb_bits     = int(sys.argv[1])
+#
+#     else:
+#         if (len(sys.argv) != 3):
+#             sys.exit("Not enough args!")
+#         else:
+#             prototxt    = sys.argv[1]
+#             caffemodel  = sys.argv[2]
+#             nb_bits     = sys.argv[3]
 
-else:
-    if (len(sys.argv) == 2):
-        prototxt    = '../example/dreamnet/train.prototxt'
-        caffemodel  = '../example/dreamnet/dreamnet.caffemodel'
-        nb_bits     = int(sys.argv[1])
+prototxt    = sys.argv[1]
+caffemodel  = sys.argv[2]
+nb_bits     = sys.argv[3]
 
-    else:
-        if (len(sys.argv) != 3):
-            sys.exit("Not enough args!")
-        else:
-            prototxt    = sys.argv[1]
-            caffemodel  = sys.argv[2]
-            nb_bits     = sys.argv[3]
-
-print('\033[94m' "\t Network used at: " + prototxt + '\033[0m')
-print('\033[94m' "\t caffemodel at: " + caffemodel + '\033[0m')
-print('\033[94m' "\t Parameter represented in : " + str(nb_bits) + " bits fixed point " +'\033[0m')
+print("\t Network used at: " + prototxt + '')
+print("\t caffemodel at: " + caffemodel + '')
+print("\t Parameter represented in : " + str(nb_bits) + " bits fixed point " +'')
 
 
 #SUPRESS CAFFE DISPLAY WHEN READING NETWORK
 os.environ["GLOG_minloglevel"] = "1"
 import caffe
-Network = caffe.Net(prototxt,caffemodel,caffe.TEST)
+Network = caffe.Net(prototxt,caffe.TEST,weights=caffemodel)
 os.environ["GLOG_minloglevel"] = "0"
 
-
+nb_bits = int(nb_bits)
 shiftnorm = nb_bits - 1
 scale_factor = math.pow(2,(nb_bits - 1)) - 1
 
@@ -84,11 +85,11 @@ for k in list(Blobs.keys()):
         else :
             (filter_fixedpt,biais_fixept) = ConvLayerFixedpoint(Network.params[k],scale_factor)
             GenerateConvCst(caph_weights_filename,k,filter_fixedpt,biais_fixept,caph_dataype)
-    if 'fc' in k:
+    if ('fc' in k):
         (filter_fixedpt,biais_fixept) = IPLayerFixedpoint(Network.params[k],scale_factor)
         GenerateIPCst(caph_weights_filename,k,Network.params,filter_fixedpt,biais_fixept, previous_layer,caph_dataype)
     previous_layer = k
-print('\033[92m' "\n > Succefully extracted network parameters in: \n \t " + caph_weights_filename +'\033[0m')
+print("\n > Succefully extracted network parameters in: \n \t " + caph_weights_filename +'')
 
 #========================================================================================================
 # -------------------------------------  Generate CAPH Network   ---------------------------------------
@@ -98,6 +99,6 @@ caph_net_filename = CAPH_GENERATED + '/cnn_generated.cph'
 
 genCaph_Headers(caph_net_filename)
 genCaph_CNN(Network,caph_net_filename,caph_dataype,"conv233c_wb_opt",shiftnorm)
-genCaph_FC(Network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME)
+#genCaph_FC(Network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME)
 
-print('\033[92m' " > Succefully generated caph network in: \n \t " + caph_net_filename +'\033[0m \n')
+print(" > Succefully generated caph network in: \n \t " + caph_net_filename +' \n')

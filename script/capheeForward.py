@@ -19,7 +19,7 @@ import subprocess
 # ====================================================================================================
 
 #Create sample.txt from testset
-print('\033[94m' + " ================ Caphee HLS tool ================ " '\033[0m')
+print('\033[94m' + " ================ Caphee HLS tool ================ " '')
 sample_dir = sys.argv[1]
 sample_file = sys.argv[2]
 print(subprocess.Popen("cp " + sample_dir + sample_file + ".txt" + " caphee/sample.txt", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
