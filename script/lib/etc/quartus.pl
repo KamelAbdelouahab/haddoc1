@@ -38,22 +38,22 @@ my $caphvhdllib="/usr/local/caph/lib/vhdl";
 #my $caphvhdllib="C:/Users/cedric/Dropbox/devel/caph-2.6.3-unix-source/lib/vhdl";
 
 # si ./sdc.pl -h => Display Help
-if ( $numArgs==1 and  $ARGV[0] eq "-h" ){ 
+if ( $numArgs==1 and  $ARGV[0] eq "-h" ){
 	print ("Usage: ./synth.pl  [OPTIONS] ...\n\n");
 	print ("   \nSDC OPTIONS:\n\n");
 	print ("   -period t (ns)\n\t clock period :default = 20 ns\n");
-	print ("   -input_min_delay t(ns) \n\t Hold constraints for inputs\n"); 
+	print ("   -input_min_delay t(ns) \n\t Hold constraints for inputs\n");
 	print ("   -input_max_delay t(ns) \n\t Setup time for inputs \n");
-	print ("   -output_min_delay t(ns) \n\t Hold time for outputs pins\n"); 
+	print ("   -output_min_delay t(ns) \n\t Hold time for outputs pins\n");
 	print ("   -output_max_delay t(ns) \n\t Setup tiime for outputs pins\n");
 	print ("   -clock_name \n\t Specify the clock's name in VHDL entity if different from clock\n");
 
 	print ("   \nFPGA OPTIONS:\n\n");
 	print ("   -family=xx specify FPGA family\n");
 	print ("   -device=xx specify FPGA device\n");
-	print ("   -quartus_ver=12.0 specify quartus version\n"); 
-	print ("   -caphvhdllib=path_to_caph_vhdl_library \n"); 
-	print ("   -projectpath=path_to_working_dir\n"); 
+	print ("   -quartus_ver=12.0 specify quartus version\n");
+	print ("   -caphvhdllib=path_to_caph_vhdl_library \n");
+	print ("   -projectpath=path_to_working_dir\n");
 
 	die "\n";
 }
@@ -194,14 +194,14 @@ while ($t[$i] !~ m/architecture/)
 		$in_bus[$inbus_cpt++]= join("",$tmp[0],"[*]"); # ADD [*] at the end of the name to specify input bus
 	} #put in the the input bus array
 	else {
-		# remove clock from input list timing 
+		# remove clock from input list timing
 		 my $test = $tmp[0] cmp $clockname;
 		 if ($tmp[0] ne $clockname ){
 			 $input[$incpt++] = $tmp[0];
 	 	}
 	}
-  
- } 
+
+ }
   #SEARCH FOR OUTPUT pins
   if ($t[$i] =~ m/out/){
 	 @tmp = split(/:/,$t[$i]);
@@ -241,7 +241,7 @@ print( FIC2 "#**************************************************************\n")
 print( FIC2 "# Create Clock\n");
 print( FIC2 "#**************************************************************\n");
 
-#Calculate duty cycle of clock 
+#Calculate duty cycle of clock
 my $dc = $SDC_PERIOD * $waveform;
 print(FIC2 "create_clock -name {$clockname} -period $SDC_PERIOD -waveform { 0 $dc } [get_ports {$clockname}]\n");
 
@@ -263,11 +263,11 @@ print( FIC2 "#**************************************************************\n")
 foreach my $inn (@in_bus){
 print (FIC2 "set_input_delay -clock $clockname -min $SDC_INPUT_MIN_DELAY [get_ports {$inn}]\n"); # bus specification
 print (FIC2 "set_input_delay -clock $clockname -max $SDC_INPUT_MAX_DELAY [get_ports {$inn}]\n");
-}   
+}
 foreach my $inn (@input){
 print (FIC2 "set_input_delay -clock $clockname -min $SDC_INPUT_MIN_DELAY [get_ports {$inn}]\n");
 print (FIC2 "set_input_delay -clock $clockname -max $SDC_INPUT_MAX_DELAY [get_ports {$inn}]\n");
-}   
+}
 
 print( FIC2 "#**************************************************************\n");
 print( FIC2 "# Set Output Delay\n");
@@ -275,12 +275,12 @@ print( FIC2 "#**************************************************************\n")
 foreach my $out (@out_bus){
 print (FIC2 "set_output_delay -clock $clockname -min $SDC_OUTPUT_MIN_DELAY [get_ports {$out}]\n");
 print (FIC2 "set_output_delay -clock $clockname -max $SDC_OUTPUT_MAX_DELAY [get_ports {$out}]\n");
-}   
+}
 
 foreach my $out (@output){
 print (FIC2 "set_output_delay -clock $clockname -min $SDC_OUTPUT_MIN_DELAY [get_ports {$out}]\n");
 print (FIC2 "set_output_delay -clock $clockname -max $SDC_OUTPUT_MAX_DELAY [get_ports {$out}]\n");
-}   
+}
 close( FIC );
 close( FIC2 );
 
@@ -387,11 +387,7 @@ print("---------------------------------\n");
 opendir(REP,$caphvhdllib) or die "E/S:$!\n";
 while(defined(my $fic=readdir REP)){
   my $f="$fic";
-# on recupere la liste des fichiers vhd ss caph_fp fifo_small_bis et fifo_small_bis_t qui genere des erreurs
-  if( ($fic!~ m/^\./) && ($fic !~ m/_fp/ ) && ($fic =~ m/.vhd$/) && ($fic !~ m/_bis/) && ($fic !~ m/_t/)){
-    $hh{$f}=$fic;
 	printf "$hh{$f}\n" ;
-  }
 }
 #printf "%s \n",$_ for keys %hh;
 closedir(REP);
@@ -495,7 +491,7 @@ my $test_patch=0;
 $i=0;
 while( defined( $t[$i]))
 {
-	if($t[$i]=~ m/component Magic_FIFO/) #on a deja patche le code 
+	if($t[$i]=~ m/component Magic_FIFO/) #on a deja patche le code
 	{
 		$test_patch=1; #on passe le flag à 1
 		close FIC; # on ferme le fichier
@@ -513,11 +509,11 @@ if (!$test_patch)
 	open(FIC2,"> $new" ) or die"open: $!";    #on ouvre un fichier temporaire
 
 	while ( ($l=<FIC>) !~ m/architecture/) # tant qu'on a trouvé le mot cle architecture
-	{ 
+	{
 		if ( $l =~ m/caph.core.all/) {next;}
 		print FIC2 $l; # on copie
 	}
-	# on insere la magic fifo 
+	# on insere la magic fifo
 	print FIC2 "$l\n";
 	print(FIC2 "component Magic_FIFO is generic(\n");
 	print(FIC2 "       depth    : integer  := 50;\n");
@@ -603,7 +599,7 @@ print(FIC "puts [get_report_panel_row -name \$Space_report_top -row 30]\n ");
 #for {set i 0} {$i< $num_rows_entity_report} {incr i} {
 #    puts [get_report_panel_row -name $entity_report -row $i]
 #}
-	
+
 print(FIC "if {\$need_to_close_project} {\n ");
 print(FIC "project_close\n ");
 print(FIC "}\n ");
@@ -658,7 +654,7 @@ print(FIC "puts [get_report_panel_row -name \$Space_report_top -row 70]\n ");
 print(FIC "puts [get_report_panel_row -name \$Space_report_top -row 71]\n ");
 print(FIC "puts [get_report_panel_row -name \$Space_report_top -row 72]\n ");
 print(FIC "puts [get_report_panel_row -name \$Space_report_top -row 74]\n ");
-	
+
 print(FIC "if {\$need_to_close_project} {\n ");
 print(FIC "project_close\n ");
 print(FIC "}\n ");
@@ -671,7 +667,6 @@ print(FIC "}\n ");
 #puts $ALM
 #puts $tmp
 #puts $ALMA
-  
+
 close( FIC );
 print color("blue"), "Perf.tcl for reporting result after compilation\n", color("reset");
-
