@@ -79,7 +79,7 @@ layer { name: "conv2"
     lr_mult: 2
   }
   convolution_param {
-    num_output: 8
+    num_output: 16
     kernel_size: 3
     stride: 1
     weight_filler {
