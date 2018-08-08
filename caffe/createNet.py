@@ -2,9 +2,6 @@ import os
 import sys
 import subprocess
 
-HOME                = os.environ['HOME']
-CAFFE_PATH           = HOME + '/caffe'
-sys.path.insert(0, CAFFE_PATH +'/python')
 CURRENT_PATH        = os.path.dirname(os.path.realpath(__file__))
 
 os.environ["GLOG_minloglevel"] = "1"
@@ -66,13 +63,6 @@ test_dataset                =     DATASET_PATH  + "/usps_test"
 dreamnet_solver_prototxt    =    DREAMNET_PATH + "/solver.prototxt"
 dreamnet_train_prototxt     =    DREAMNET_PATH + "/train.prototxt"
 dreamnet_test_prototxt        =    DREAMNET_PATH + "/test.prototxt"
-
-print subprocess.Popen("rm -rf net", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read()
-print subprocess.Popen("rm -rf " + DREAMNET_PATH , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read()
-
-
-print subprocess.Popen("mkdir net", shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read()
-print subprocess.Popen("mkdir " + DREAMNET_PATH , shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read()
 
 create_solver(dreamnet_solver_prototxt,dreamnet_train_prototxt,dreamnet_test_prototxt)
 
