@@ -18,7 +18,7 @@ rules
 
 
 -- -- Acteur de distributions: Attention aux types
--- actor distr (wi:signed<32>array[4][36], n:unsigned<8>,m:unsigned<8>)
+-- actor distr (wi:signed<8>array[4][36], n:unsigned<8>,m:unsigned<8>)
 --  in (ii: signed<s> dc)
 --  out(k0: signed<s> dc,k1: signed<s> dc,k2: signed<s> dc,k3: signed<s> dc)
 --  
@@ -53,7 +53,7 @@ rules
 -- ;
 -- 
 -- 
--- actor distr10 (wi:signed<32>array[10][16], n:unsigned<8>,m:unsigned<8>)
+-- actor distr10 (wi:signed<8>array[10][16], n:unsigned<8>,m:unsigned<8>)
 --  in (ii: signed<s> dc)
 --  out(k0: signed<s> dc,k1: signed<s> dc,k2: signed<s> dc,k3: signed<s> dc,
 --      k4: signed<s> dc,k5: signed<s> dc,k6: signed<s> dc,k7: signed<s> dc,

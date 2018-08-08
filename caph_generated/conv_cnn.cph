@@ -1,6 +1,6 @@
 actor shift (n: int)
-	in  (a: signed<32> dc)
-	out (c: signed<32> dc)
+	in  (a: signed<8> dc)
+	out (c: signed<8> dc)
 rules a -> c
 	| '< -> '<
 	| 'p -> 'p>>n
