@@ -6,7 +6,6 @@ use Cwd;
 
 my %h;
 my $vhd_rep = getcwd;
-#my $vhd_rep = "E:/Seafile/Seafile/my_library/manuscrit_cedric/src/hogsvm_opt_argmax/top/vhdl/";
 
 my $project;
 my $toplevel;
@@ -32,10 +31,9 @@ my $SDC_OUTPUT_MAX_DELAY=0.5;
 my $FPGA_fam="STRATIX V";
 my $FPGA_dev="5SGSED8N3F45I4";
 
-my $quartus_ver="13.1";
+my $quartus_ver="18.0";
 my $eda_simu="ModelSim-Altera (VHDL)";
-my $caphvhdllib="/usr/local/caph/lib/vhdl";
-#my $caphvhdllib="C:/Users/cedric/Dropbox/devel/caph-2.6.3-unix-source/lib/vhdl";
+my $caphvhdllib="/home/kamel/dev/caph-src/lib/vhdl";
 
 # si ./sdc.pl -h => Display Help
 if ( $numArgs==1 and  $ARGV[0] eq "-h" ){
@@ -387,7 +385,11 @@ print("---------------------------------\n");
 opendir(REP,$caphvhdllib) or die "E/S:$!\n";
 while(defined(my $fic=readdir REP)){
   my $f="$fic";
+# on recupere la liste des fichiers vhd ss caph_fp fifo_small_bis et fifo_small_bis_t qui genere des erreurs
+  if( ($fic!~ m/^\./) && ($fic =~ m/.vhd$/) && ($fic !~ m/_bis/) && ($fic !~ m/_fp/ ) ){
+    $hh{$f}=$fic;
 	printf "$hh{$f}\n" ;
+  }
 }
 #printf "%s \n",$_ for keys %hh;
 closedir(REP);
