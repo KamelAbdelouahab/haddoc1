@@ -2,7 +2,7 @@
 
 **Warning: This repo is kept here for debug reasons only. It's no longer maintained and the results it delivers are outperformed by the v2 version of the tool [here](https://github.com/KamelAbdelouahab/haddoc2)**
 
-![flow](https://lh3.googleusercontent.com/lfsKhjCHXUKCRUvS9rHKnn-6QvIW89MRfF5w-6t4aEp6ZWxOca553OpnffgtmVUx9ZXPwHratf_tJg=w958-h936)
+![flow](./Haddoc1-Flow.png)
 
 
 ## Clarifications
