@@ -88,7 +88,7 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
     # # Include the FC layer generated file (with GENC.EXE)
     # f.write("\n #include \"fc_layer_gen.cph\"\n");
     # Output streams
-    f.write("\nstream i:"+caph_dataype+"dc from \"sample.txt\";\n");
+    f.write("\nstream i:" + caph_dataype + "dc from \"sample.txt\";\n");
     for nb in range(sizesum3):
        f.write("stream w_pool3%d : " %nb)
        f.write("%s dc " %caph_dataype)
@@ -96,10 +96,10 @@ def genCaph_FC(network,caph_net_filename,caph_dataype,C2V_CPP_LIB,C2V_DIRNAME):
     f.close()
 
     # datatype= caph_dataype.replace("<","\<").replace(">","\>")
-    datatype= "signed\<32\>"
+    datatype= "signed\<8\>"
     print('\033[94m' "\n > Lunching gen_cnn_code with parameters:"+ '')
     os.environ["GLOG_minloglevel"] = "1"
-    print(subprocess.Popen(C2V_CPP_LIB + "/gen_cnn_code %d %d %d %d %d %d %d %s %s %d %s %s" %(repsize,sizesum1,sizesum2,nfeat,nx_feat,ny_feat,nb_unit_fc,fc_wirename_in,fc_wirename_out,nbclass,"y_",datatype), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
+    print(subprocess.Popen(C2V_CPP_LIB + "/gen_cnn_code %d %d %d %d %d %d %d %s %s %d %s %s" %(repsize,sizesum1,sizesum1,nfeat,nx_feat,ny_feat,nb_unit_fc,fc_wirename_in,fc_wirename_out,nbclass,"y_",datatype), shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT).stdout.read())
     os.environ["GLOG_minloglevel"] = "0"
     print(subprocess.Popen("cp -R  " + "/home/kamel/dev/haddoc1/cnn " +
                             "/home/kamel/dev/haddoc1/caph_generated" ,
