@@ -97,7 +97,7 @@ def GenerateConvCst(filename, name, filter_fixedpt, biais_fixedpt,caph_dataype):
                 f.write("%d, " %biais_fixedpt[i])
             else:
                 f.write("%d]" % biais_fixedpt[i])
-                f.write(":signed<32>array[%d];" %biais_fixedpt.shape[0])
+                f.write(":signed<8>array[%d];" %biais_fixedpt.shape[0])
 
         f.write("\n\n")
 

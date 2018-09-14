@@ -1,24 +1,73 @@
+actor sum4()
+in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc)
+out(o:int<s,m> dc)
+rules
+|(i0:'<,i1:'<,i2:'<,i3:'<) -> (o:'<)
+|(i0:'>,i1:'>,i2:'>,i3:'>) -> (o:'>)
+|(i0:'x0,i1:'x1,i2:'x2,i3:'x3)-> (o:'(x0+x1+x2+x3))
+;
 actor sum6()
-in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc) 
-out(o:int<s,m> dc) 
+in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc)
+out(o:int<s,m> dc)
 rules
 |(i0:'<,i1:'<,i2:'<,i3:'<,i4:'<,i5:'<) -> (o:'<)
 |(i0:'>,i1:'>,i2:'>,i3:'>,i4:'>,i5:'>) -> (o:'>)
 |(i0:'x0,i1:'x1,i2:'x2,i3:'x3,i4:'x4,i5:'x5)-> (o:'(x0+x1+x2+x3+x4+x5))
 ;
-actor sum16()
-in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc,i6:int<s,m> dc,i7:int<s,m> dc,i8:int<s,m> dc,i9:int<s,m> dc,i10:int<s,m> dc,i11:int<s,m> dc,i12:int<s,m> dc,i13:int<s,m> dc,i14:int<s,m> dc,i15:int<s,m> dc) 
-out(o:int<s,m> dc) 
-rules
-|(i0:'<,i1:'<,i2:'<,i3:'<,i4:'<,i5:'<,i6:'<,i7:'<,i8:'<,i9:'<,i10:'<,i11:'<,i12:'<,i13:'<,i14:'<,i15:'<) -> (o:'<)
-|(i0:'>,i1:'>,i2:'>,i3:'>,i4:'>,i5:'>,i6:'>,i7:'>,i8:'>,i9:'>,i10:'>,i11:'>,i12:'>,i13:'>,i14:'>,i15:'>) -> (o:'>)
-|(i0:'x0,i1:'x1,i2:'x2,i3:'x3,i4:'x4,i5:'x5,i6:'x6,i7:'x7,i8:'x8,i9:'x9,i10:'x10,i11:'x11,i12:'x12,i13:'x13,i14:'x14,i15:'x15)-> (o:'(x0+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+x11+x12+x13+x14+x15))
-;
 actor sum10()
-in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc,i6:int<s,m> dc,i7:int<s,m> dc,i8:int<s,m> dc,i9:int<s,m> dc) 
-out(o:int<s,m> dc) 
+in (i0:int<s,m> dc,i1:int<s,m> dc,i2:int<s,m> dc,i3:int<s,m> dc,i4:int<s,m> dc,i5:int<s,m> dc,i6:int<s,m> dc,i7:int<s,m> dc,i8:int<s,m> dc,i9:int<s,m> dc)
+out(o:int<s,m> dc)
 rules
 |(i0:'<,i1:'<,i2:'<,i3:'<,i4:'<,i5:'<,i6:'<,i7:'<,i8:'<,i9:'<) -> (o:'<)
 |(i0:'>,i1:'>,i2:'>,i3:'>,i4:'>,i5:'>,i6:'>,i7:'>,i8:'>,i9:'>) -> (o:'>)
 |(i0:'x0,i1:'x1,i2:'x2,i3:'x3,i4:'x4,i5:'x5,i6:'x6,i7:'x7,i8:'x8,i9:'x9)-> (o:'(x0+x1+x2+x3+x4+x5+x6+x7+x8+x9))
 ;
+actor sum20()
+in (i0:int<s,m> dc,
+    i1:int<s,m> dc,
+    i2:int<s,m> dc,
+    i3:int<s,m> dc,
+    i4:int<s,m> dc,
+    i5:int<s,m> dc,
+    i6:int<s,m> dc,
+    i7:int<s,m> dc,
+    i8:int<s,m> dc,
+    i9:int<s,m> dc,
+    i10:int<s,m> dc,
+    i11:int<s,m> dc,
+    i12:int<s,m> dc,
+    i13:int<s,m> dc,
+    i14:int<s,m> dc,
+    i15:int<s,m> dc,
+    i16:int<s,m> dc,
+    i17:int<s,m> dc,
+    i18:int<s,m> dc,
+    i19:int<s,m> dc)
+out(o:int<s,m> dc)
+
+rules
+|(i0:'<,i1:'<,i2:'<,i3:'<,i4:'<,i5:'<,i6:'<,i7:'<,i8:'<,i9:'<,i10:'<, i11:'<, i12:'<, i13:'<, i14:'<, i15:'<, i16:'<, i17:'<, i18:'<, i19:'<)
+  -> (o:'<)
+|(i0:'>,i1:'>,i2:'>,i3:'>,i4:'>,i5:'>,i6:'>,i7:'>,i8:'>,i9:'>,i10:'>, i11:'>, i12:'>, i13:'>, i14:'>, i15:'>, i16:'>, i17:'>, i18:'>, i19:'>)
+  -> (o:'>)
+|(i0:'x0,
+  i1:'x1,
+  i2:'x2,
+  i3:'x3,
+  i4:'x4,
+  i5:'x5,
+  i6:'x6,
+  i7:'x7,
+  i8:'x8,
+  i9:'x9,
+  i10:'x10,
+  i11:'x11,
+  i12:'x12,
+  i13:'x13,
+  i14:'x14,
+  i15:'x15,
+  i16:'x16,
+  i17:'x17,
+  i18:'x18,
+  i19:'x19)
+  -> (o:'(x0+x1+x2+x3+x4+x5+x6+x7+x8+x9+x10+x11+x12+x13+x14+x15+x16+x17+x18+x19));
