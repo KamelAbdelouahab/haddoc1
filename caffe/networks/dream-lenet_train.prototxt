@@ -79,7 +79,7 @@ layer { name: "conv2"
     lr_mult: 2
   }
   convolution_param {
-    num_output: 16
+    num_output: 8
     kernel_size: 3
     stride: 1
     weight_filler {
@@ -153,7 +153,7 @@ layer { name: "ip1"
     lr_mult: 2
   }
   inner_product_param {
-    num_output: 150
+    num_output: 420
     weight_filler {
       type: "xavier"
     }
