@@ -65,7 +65,7 @@ scale_factor = math.pow(2,(nb_bits - 1)) - 1
 # ------------------------------   Generate weights caph file  ----------------------------
 #=======================================================================================================
 
-caph_dataype = "signed<32>"
+caph_dataype = "signed<8>"
 caph_weights_filename = CAPH_GENERATED + '/weights.cph'
 
 f= open(caph_weights_filename,'w')

@@ -1,8 +1,0 @@
-actor dot2()
-in (x0:int<s,m> dc,w0:int<s,m> dc) 
-out(o:int<s,m> dc) 
-rules
-|(x0:'<,w0:'<) -> (o:'<)
-|(x0:'>,w0:'>) -> (o:'>)
-|(x0:'x0,w0:'w0)-> (o:'((x0*w0)))
-;

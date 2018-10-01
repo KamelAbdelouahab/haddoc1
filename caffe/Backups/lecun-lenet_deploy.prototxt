@@ -3,7 +3,7 @@ layer {
   name: "data"
   type: "Input"
   top: "data"
-  input_param { shape: { dim: 64 dim: 1 dim: 28 dim: 28 } }
+  input_param { shape: { dim: 1 dim: 1 dim: 28 dim: 28 } }
 }
 layer { name: "conv1"
   type: "Convolution"
@@ -53,7 +53,7 @@ layer { name: "conv2"
     lr_mult: 2
   }
   convolution_param {
-    num_output: 8
+    num_output: 16
     kernel_size: 3
     stride: 1
     weight_filler {
@@ -90,7 +90,7 @@ layer { name: "conv3"
     lr_mult: 2
   }
   convolution_param {
-    num_output: 60
+    num_output: 120
     kernel_size: 3
     stride: 1
     weight_filler {
@@ -115,49 +115,4 @@ layer { name: "pool3"
     kernel_size: 2
     stride: 2
   }
-}
-layer { name: "ip1"
-  type: "InnerProduct"
-  bottom: "pool3"
-  top: "ip1"
-  param {
-    lr_mult: 1
-  }
-  param {
-    lr_mult: 2
-  }
-  inner_product_param {
-    num_output: 150
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer { name: "ip2"
-  type: "InnerProduct"
-  bottom: "ip1"
-  top: "ip2"
-  param {
-    lr_mult: 1
-  }
-  param {
-    lr_mult: 2
-  }
-  inner_product_param {
-    num_output: 10
-    weight_filler {
-      type: "xavier"
-    }
-    bias_filler {
-      type: "constant"
-    }
-  }
-}
-layer { name: "classif"
-  type: "Softmax"
-  bottom: "ip2"
-  top: "classif"
 }

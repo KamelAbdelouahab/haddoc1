@@ -1,29 +1,8 @@
-actor rep20()
-in  (x   : signed<8> dc)
-out (y0  : signed<8> dc,
-     y1  : signed<8> dc,
-     y2  : signed<8> dc,
-     y3  : signed<8> dc,
-     y4  : signed<8> dc,
-     y5  : signed<8> dc,
-     y6  : signed<8> dc,
-     y7  : signed<8> dc,
-     y8  : signed<8> dc,
-     y9  : signed<8> dc,
-     y10 : signed<8> dc,
-     y11 : signed<8> dc,
-     y12 : signed<8> dc,
-     y13 : signed<8> dc,
-     y14 : signed<8> dc,
-     y15 : signed<8> dc,
-     y16 : signed<8> dc,
-     y17 : signed<8> dc,
-     y18 : signed<8> dc,
-     y19 : signed<8> dc)
-
-
-rules
-|(x: '<) -> (y0:'<, y1:'<, y2:'<, y3:'<, y3:'<, y4:'<, y5:'<, y6:'<, y7:'<, y8:'<, y9:'<, y10:'<, y11:'<, y12:'<, y13:'<, y14:'<, y15:'<, y16:'<, y17:'<, y18:'<, y19:'<)
-|(x: '>) -> (y0:'>, y1:'>, y2:'>, y3:'>, y3:'>, y4:'>, y5:'>, y6:'>, y7:'>, y8:'>, y9:'>, y10:'>, y11:'>, y12:'>, y13:'>, y14:'>, y15:'>, y16:'>, y17:'>, y18:'>, y19:'>)
-|(x: 'v) -> (y0:'v, y1:'v, y2:'v, y3:'v, y3:'v, y4:'v, y5:'v, y6:'v, y7:'v, y8:'v, y9:'v, y10:'v, y11:'v, y12:'v, y13:'v, y14:'v, y15:'v, y16:'v, y17:'v, y18:'v, y19:'v)
+actor rep6()
+in (x:signed<s>dc)
+out (y0:signed<s>dc,y1:signed<s>dc,y2:signed<s>dc,y3:signed<s>dc,y4:signed<s>dc,y5:signed<s>dc) 
+rules x ->(y0,y1,y2,y3,y4,y5)
+|'< -> ('<,'<,'<,'<,'<,'<)
+|'> -> ('>,'>,'>,'>,'>,'>)
+|'v -> ('v,'v,'v,'v,'v,'v)
 ;

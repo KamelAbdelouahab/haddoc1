@@ -484,7 +484,7 @@ close( FIC );
 print color("green"), "Modelsim GATE LEVEL script gate_simu.do Generated in $synth_rep/gate_simu.do\n", color("reset");
 
 
-#### TMP: PATCH TOP LEVEL FOR INCLUDING MAGIC FIFO (required by modelsim) #####
+#### TMP: PATCH TOP LEVEL FOR INCLUDING FIFO (required by modelsim) #####
 ##################################################################################"
 my $l;
 open(FIC,"< $toplevel") or die"open: $!"; #on ouvre le toplevel
@@ -493,7 +493,7 @@ my $test_patch=0;
 $i=0;
 while( defined( $t[$i]))
 {
-	if($t[$i]=~ m/component Magic_FIFO/) #on a deja patche le code
+	if($t[$i]=~ m/component fifo/) #on a deja patche le code
 	{
 		$test_patch=1; #on passe le flag à 1
 		close FIC; # on ferme le fichier
@@ -506,7 +506,7 @@ close FIC; # on referme le toplevel
 if (!$test_patch)
 {
 	my $new = "$toplevel.tmp";
-	print "Insert Magic_FIFO component declaration in top_level\n";
+	print "Insert FIFO component declaration in top_level\n";
 	open(FIC,"< $toplevel") or die"open: $!"; #on ouvre le toplevel
 	open(FIC2,"> $new" ) or die"open: $!";    #on ouvre un fichier temporaire
 
@@ -515,12 +515,12 @@ if (!$test_patch)
 		if ( $l =~ m/caph.core.all/) {next;}
 		print FIC2 $l; # on copie
 	}
+
 	# on insere la magic fifo
 	print FIC2 "$l\n";
-	print(FIC2 "component Magic_FIFO is generic(\n");
-	print(FIC2 "       depth    : integer  := 50;\n");
-	print(FIC2 "       size     : integer  := 10;\n");
-	print(FIC2 "       DEPT_TH  : integer  := 30);\n");
+	print(FIC2 "component fifo is generic(\n");
+	print(FIC2 "       depth     : integer  := 8;\n");
+	print(FIC2 "       width     : integer  := 8 );\n");
 	print(FIC2 "port(\n");
 	print(FIC2 "         full : out std_logic;\n");
 	print(FIC2 "         datain : in std_logic_vector (size-1 downto 0);\n");
@@ -531,7 +531,7 @@ if (!$test_patch)
 	print(FIC2 "         clk : in std_logic;\n");
 	print(FIC2 "         rst: in std_logic\n");
 	print(FIC2 "         );\n");
-	print(FIC2 "end component;\n\n");
+	print(FIC2 "end component fifo;\n\n");
 	# on finit de recopier le fichier
 	while ( defined ($l=<FIC>))
 	{

@@ -1,8 +1,0 @@
-actor rep6()
-in (x:signed<s>dc)
-out (y0:signed<s>dc,y1:signed<s>dc,y2:signed<s>dc,y3:signed<s>dc,y4:signed<s>dc,y5:signed<s>dc) 
-rules x ->(y0,y1,y2,y3,y4,y5)
-|'< -> ('<,'<,'<,'<,'<,'<)
-|'> -> ('>,'>,'>,'>,'>,'>)
-|'v -> ('v,'v,'v,'v,'v,'v)
-;
